@@ -11,3 +11,5 @@ As of December 2019, the CUDA and CuDNN packages for Tegra Linux only exist in d
 ```
 ln -sf /usr/lib/x86_64-linux-gnu/libcuda.so /usr/local/lib/libcuda.so.1
 ```
+
+__NOTE__: In case Docker recipe needs the library, developer version of nvidia/cuda image can be used while building. Then, use runtime version for deployment.
