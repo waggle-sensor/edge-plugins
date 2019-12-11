@@ -1,0 +1,73 @@
+FROM waggle/plugin-base:0.1.0 as build
+
+LABEL version="4.1.1" \
+      description="OpenCV plugin image with OpenCL enabled"
+
+RUN apt-get update \
+  && apt-get install -y \
+  build-essential \
+  python3-dev \
+  python3-pip \
+  cmake \
+  libavcodec-dev \
+  libavformat-dev \
+  libswscale-dev \
+  libtbb2 \
+  libtbb-dev \
+  libjpeg-dev \
+  libpng-dev \
+  libtiff-dev \
+  libdc1394-22-dev
+
+RUN cd /tmp \
+  && git clone https://github.com/opencv/opencv.git \
+  && git clone https://github.com/opencv/opencv_contrib.git \
+  && cd /tmp/opencv_contrib \
+  && git checkout 4.1.1 \
+  && cd /tmp/opencv \
+  && git checkout 4.1.1 \
+  && mkdir build \
+  && cd build \
+  && numpy_loc=$(pip3 show numpy | grep Location | cut -d ':' -f 2 | tr -d ' ') \
+  && cmake -D CMAKE_BUILD_TYPE=Release \
+  -D CMAKE_INSTALL_PREFIX=/usr/local \
+  -D BUILD_opencv_apps=OFF \
+  -D OPENCV_EXTRA_MODULES_PATH=/tmp/opencv_contrib/modules \
+  -D PYTHON3_EXECUTABLE=/usr/bin/python3 \
+  -D PYTHON3_NUMPY_INCLUDE_DIRS=${numpy_loc}/numpy/core/include \
+  -D WITH_JASPER=OFF \
+  -D WITH_VTK=OFF \
+  -D WITH_GTK=OFF \
+  -D WITH_FFMPEG=ON \
+  -D WITH_LIBV4L=ON \
+  -D WITH_OPENCL=ON \
+  -D CPACK_BINARY_DEB:BOOL=ON ..
+
+RUN cd /tmp/opencv/build \
+  && number_of_core=$(($(cat /proc/cpuinfo | grep processor | wc -l) - 1)) \
+  && make -j${number_of_core} all
+
+RUN cd /tmp/opencv/build \
+  && make install \
+  && make package
+
+FROM waggle/plugin-base:0.1.0
+
+COPY --from=build /tmp/opencv/build/OpenCV*.deb /tmp/
+
+RUN apt-get update \
+  && apt-get install -y \
+  libavcodec-dev \
+  libavformat-dev \
+  libswscale-dev \
+  libtbb2 \
+  libtbb-dev \
+  libjpeg-dev \
+  libpng-dev \
+  libtiff-dev \
+  libdc1394-22-dev \
+  && rm -rf /var/lib/apt/lists/*
+
+RUN cd /tmp \
+  && dpkg -i *.deb \
+  && rm /tmp/*.deb

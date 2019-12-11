@@ -1,0 +1,17 @@
+FROM nvidia/cuda:10.1-cudnn7-runtime-ubuntu18.04
+
+LABEL version="0.1.0" \
+      description="CUDA 10.1 supported plugin image with CUDNN 7" \
+      architecture="linux/amd64"
+
+RUN ln -sf /usr/lib/x86_64-linux-gnu/libcuda.so /usr/local/lib/libcuda.so.1
+
+RUN apt-get update\
+  && apt-get install -y \
+  python3 \
+  git \
+  python3-pip \
+  nano \
+  && rm -rf /var/lib/apt/lists/*
+
+RUN pip3 install --no-cache-dir numpy

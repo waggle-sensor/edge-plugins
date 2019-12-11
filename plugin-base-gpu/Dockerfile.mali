@@ -1,0 +1,10 @@
+FROM waggle/plugin-base:0.1.0
+
+LABEL version="0.1.0" \
+      description="Mali T62x supported plugin image" \
+      architecture="linux/arm/v7"
+
+RUN apt-get update\
+  && apt-get install -y \
+  mali-t62x-fbdev-driver \
+  && rm -rf /var/lib/apt/lists/*
