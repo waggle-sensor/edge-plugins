@@ -4,31 +4,18 @@ Waggle edge plugins (i.e., user application) are containerized using Waggle Dock
 
 #### Hello World Edge Plugin
 
-```
-$ cat <<EOF > plugin.sh
-echo "hello world"
-echo "bye"
-EOF
-$ cat <<EOF > Dockerfile
-FROM waggle/plugin-base-light:0.1.0
-COPY plugin.sh /app/
-WORKDIR /app
-CMD ["/bin/sh", "plugin.sh"]
-EOF
-```
-
-Then run Docker "build" command to build (or "buildx" if you have),
+Run Docker "build" command (or "buildx" if you have set it up) to build helloworld Docker image.
 
 __NOTE__: Assuming you have access to your local docker engine; if not, add the user to docker group
 
 ```
-# when using docker build command
-$ docker build -t tmp/helloworld .
+# when using docker build command at root of this repository
+$ docker build -t tmp/helloworld plugin-helloworld
 
-# when using docker buildx command
-$ docker buildx build -t tmp/helloworld --platform linux/amd64,linux/arm/v7 --load .
+# when using docker buildx command at root of this repository
+$ docker buildx build -t tmp/helloworld --platform linux/amd64,linux/arm64,linux/arm/v7 --load plugin-helloworld
 
-# running the container
+# run the container
 $ docker run -ti --rm tmp/helloworld
 hello world
 bye
