@@ -1,0 +1,13 @@
+FROM waggle/plugin-base-gpu:0.1.0
+
+RUN apt-get update \
+  && apt-get install -y \
+  python3-dev \
+  python3-pip \
+  libatlas-base-dev \
+  libhdf5-dev \
+  && rm -rf /var/lib/apt/lists/*
+
+RUN pip3 --no-cache-dir install --upgrade pip
+
+RUN pip3 --no-cache-dir install tensorflow-gpu==1.14.0
