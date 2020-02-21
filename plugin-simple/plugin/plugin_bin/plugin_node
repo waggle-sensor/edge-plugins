@@ -9,11 +9,12 @@ import waggle.plugin
 import time
 import logging
 
-logging.basicConfig(level=logging.DEBUG)
-
 plugin = waggle.plugin.Plugin()
 
 while True:
+    for msg in plugin.get_waiting_messages():
+        print('received message!', msg, flush=True)
+
     plugin.add_measurement({
         'sensor_id': 1,
         'parameter_id': 1,
