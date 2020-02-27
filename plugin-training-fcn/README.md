@@ -2,7 +2,7 @@
 
 The docker file is providing a method of training a semantic segmentation model, Resnet101 based FCN network, using PyTorch 1.3. Basically, python3 libraries; torch, torchvision, tqdm, fcn, and fcn related libraries are necessary. The code is supporting CPU and CUDA.
 
-For any of image pairs of original images and labeled images can use this method for segmentation. An example usage of this method is cloud coverage estimation.
+For any of image pairs of original images and labeled images can use this method for segmentation. An example usage of this method is cloud coverage estimation and water flooding/ponding detection.
 
 ### How train:
 
