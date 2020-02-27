@@ -12,3 +12,4 @@ python3 run.py input_path
 
 - The code is based on a FCN model that provided by PyTorch so that it is always trying to download the base model from PyTorch server. Therefore, the base model need to be added in the package and the path for the base model needs to be re-identified.
 
+- The path of the model in the code is hard coded, so it would be better to re-design the part.
