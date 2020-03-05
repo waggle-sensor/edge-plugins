@@ -1,0 +1,10 @@
+FROM waggle/plugin-base-gpu:0.1.0
+
+#RUN apt-get update \
+#  && apt-get install -y \
+#  libopenblas-base \
+#  zlib1g-dev \
+#  libjpeg-dev \
+#  && rm -rf /var/lib/apt/lists/*
+
+RUN pip3 --no-cache-dir install torch==1.4.0 torchvision==0.5.0
