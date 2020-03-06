@@ -24,3 +24,7 @@ bye
 #### How to Build Your Edge Plugin
 
 Please refer to [building simple edge plugin](plugin-simple/README.md)
+
+#### Waggle Base Images
+
+Waggle users are able to build edge plugins that are based on Waggle base images. [Pluing hierarchy](docs/plugin_base_hierarchy.md) describes what plugin base image users need to choose depending on their needs.
