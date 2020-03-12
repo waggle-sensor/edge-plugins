@@ -1,0 +1,19 @@
+FROM waggle/plugin-base-gpu:0.1.0
+
+RUN apt-get update \
+  && apt-get install -y \
+  libopenblas-base \
+  zlib1g-dev \
+  libjpeg-dev \
+  && rm -rf /var/lib/apt/lists/*
+
+RUN pip3 --no-cache-dir install Cython Pillow==6.2.1
+
+ENV torch_whl=torch-1.4.0a0+7f73f1d-cp36-cp36m-linux_armv7l.whl
+ENV torchvision_whl=torchvision-0.5.0a0+85b8fbf-cp36-cp36m-linux_armv7l.whl
+
+COPY ${torch_whl} /tmp/
+COPY ${torchvision_whl} /tmp/
+RUN cd /tmp \
+  && pip3 install ${torch_whl} ${torchvision_whl} \
+  && rm -rf ${torch_whl} ${torchvision_whl}
