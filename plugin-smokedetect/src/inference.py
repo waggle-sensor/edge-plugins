@@ -37,9 +37,10 @@ class FireImage:
             tf_lite_interpreter.invoke()
             output = tf_lite_interpreter.get_tensor(output_details[0]["index"])
             j = np.argmax(output)
+            value = output[0][j]
             percent = "{:.2%}".format(output[0][j])
             ans = f"{FireImage.classes[j]}, {percent}"
 
-            return  [ans]
+            return  [ans,float(value)]
         else:
             return "ERROR! Image input is not in correct dimensions!"
