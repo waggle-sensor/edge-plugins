@@ -15,7 +15,7 @@ Run the container:
 docker run sagecontinuum/plugin-smokedetect:0.1.0
 ```
 # Instructions
-The following instrutions are to serve a user from start to finish how to create the smoke detection plugin.
+The following instructions are meant to serve a user from start to finish of how to create the smoke detection plugin.
 
 ## Step 1: clone beehive repository 
 ```bash
@@ -43,7 +43,7 @@ the trainned model will be save to the object storage through [SAGE REST API](ht
 ```bash
 git clone https://github.com/waggle-sensor/waggle-node
 ```
-To start the waggle node (this assumes that there is an existing beehive instance already created):
+To start the waggle node (this assumes an existing beehive instance):
 ```bash
 ./waggle-node up
 ```

@@ -1,21 +1,36 @@
 import tflite_runtime.interpreter as tflite
 import numpy as np
-from PIL import Image
 import os
+from PIL import Image
+import requests
+from requests.exceptions import HTTPError
+from io import BytesIO
 
 class FireImage:
     oneFire = False
     newsize = (128,128)
     classes = ["No Fire", "FIRE"]
-    def __init__(self, imageID):
+    def __init__(self):
         self.image = None
-        self.location = imageID
-        self.direction = imageID
     
-    def read_image(self, imagePath):
-        PIL_image = Image.open(imagePath)
-        img = np.array(PIL_image.resize(FireImage.newsize))
+    def readImage(self, imagePath):
+        image = Image.open(imagePath)
+        img = np.array(image.resize(FireImage.newsize))
         img = img.astype("float32") / 255.0
+        self.image = img
+
+    def urlToImage(self,url):
+        img = None    
+        try:
+            response = requests.get(url)
+            image = Image.open(BytesIO(response.content))
+            img = np.array(image.resize(FireImage.newsize))
+            img = img.astype("float32") / 255.0
+            response.raise_for_status()
+        except HTTPError as http_err:
+            print(f'HTTP error occurred: {http_err}')  
+        except Exception as err:
+            print(f'Other error occurred: {err}')
         self.image = img
 
     def inference(self, tf_lite_interpreter):
