@@ -11,18 +11,14 @@ import requests
 
 #Sage REST API parameters
 url = 'https://sage-restapi.nautilus.optiputer.net/api/v1/'
-testImg = "/data/bh-n-mobo-c/1546362010.jpg"
-modelFile = 'model.tflite'
-modelPath = "/data/model/2020-03-12/"+modelFile
-bucket = 'plugin-smoke-detection'
-object = 'model/2020-03-17/'+modelFile
 modelRepo = modelRepo.modelRepo(url)
-directory = '/data/model/2020-03-17/'
-#does model exist on waggle node
+bucket = 'plugin-smoke-detection'
+object = 'model.tflite'
+directory = '/data/model/'
+modelPath = os.path.join(directory,object)
+#Does model exist on waggle node
 if not os.path.exists(modelPath):
-    #get model from object storage
     modelRepo.getModel(bucket,object,directory)
-    modelPath = directory + modelFile
 
 #HPWREN Parameters
 hpwrenUrl = "https://firemap.sdsc.edu/pylaski/\
@@ -47,7 +43,6 @@ while True:
     print('Get image from HPWREN Camera')
     print("Image url: " + imageURL)
     print("Description: " + description)
-    #testObj.readImage(testImg)
     testObj.urlToImage(imageURL)
     interpreter = tflite.Interpreter(model_path=modelPath)
     interpreter.allocate_tensors()
@@ -62,7 +57,7 @@ while True:
         'value': percent,
     })
 
-    print('Publish', flush=True)
+    print('Publish\n', flush=True)
     plugin.publish_measurements()
     time.sleep(5)
 

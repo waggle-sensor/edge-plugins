@@ -52,4 +52,19 @@ To start a plugin you will need to create a docker image and pass the following 
 ```bash
 ./waggle-node schedule waggle/plugin-smokedetect:0.1.0
 ```
+To view the output:
+```bash
+./waggle-node logs | grep plugin
+```
 
+Example output of the plugin:
+```
+plugin-50-0.1.0-0_1     | published measurements:
+plugin-50-0.1.0-0_1     | {'sensor_id': 1, 'sensor_instance': 0, 'parameter_id': 10, 'timestamp': 1584738130, 'value': 0.5205857753753662}
+plugin-50-0.1.0-0_1     | Get image from HPWREN Camera
+plugin-50-0.1.0-0_1     | Image url: https://hpwren.ucsd.edu/cameras/L/bm-n-mobo-m.jpg
+plugin-50-0.1.0-0_1     | Description: Big Black Mountain ~north view, monochrome
+plugin-50-0.1.0-0_1     | Perform an inference based on trainned model
+plugin-50-0.1.0-0_1     | FIRE, 52.06%
+plugin-50-0.1.0-0_1     | Publish
+```
