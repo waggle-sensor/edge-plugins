@@ -4,7 +4,7 @@ class solver(object):
         self.data_loader = data_loader
 
         model_module = import_module('models.{}.fcn{}'.format(opts.backbone, opts.fcn))
-        self.model = model_module.FCN(n_class=2)
+        self.model = model_module.FCN(n_class=opts.n_classes)
 
         self.model.resume(opts.resume, test=opts.mode in ['val', 'demo'])
 

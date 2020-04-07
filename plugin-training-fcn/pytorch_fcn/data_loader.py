@@ -5,23 +5,12 @@ import numpy as np
 import PIL
 
 import glob
+from random import sample
 
 class Cloud_Data(data.Dataset):
-    class_names = []
-    with open('class_names.list', 'r') as f:
-        for line in f:
-            class_names.append(line.strip())
 
-    class_names = np.array(class_names)
-    print(class_names)
-    '''
-    class_names = np.array([
-        'sky',
-        'cloud',
-    ])
-    '''
-
-    def __init__(self, root, image_set='train', backbone='vgg', transform=False):
+    def __init__(self, class_names, root, image_set='train', backbone='vgg', transform=False):
+        self.class_names = class_names
         self._transform = transform
         self.backbone = backbone
         self.image_set = image_set
@@ -33,9 +22,24 @@ class Cloud_Data(data.Dataset):
             self.mean = np.array([0.485, 0.456, 0.406])
             self.std = np.array([0.229, 0.224, 0.225])
 
-        train = glob.glob(root+'/converged/selected300/*.png')
-        lbl = glob.glob(root+'/GTmaps/*.png')
-        val = glob.glob(root+'/converged/test/*.png')
+
+        image = glob.glob(root+'/image/*')
+        lbl = glob.glob(root+'/gt_image/*')
+
+        tnum = [i for i in range(len(image))]
+        tdata = int(len(image)*0.8)
+        tsample = sample(tnum, tdata)
+
+        print(len(image), len(lbl))
+
+        train = []
+        val = []
+        for i in tnum:
+            if i in tsample:
+                train.append(image[i])
+            else:
+                val.append(image[i])
+
 
         self.files = {'train': train, 'val': val, 'lbl':lbl}
 
@@ -61,8 +65,13 @@ class Cloud_Data(data.Dataset):
         lbl_file = find_lbl()
         lbl = PIL.Image.open(lbl_file).convert('P')
         lbl = np.array(lbl, dtype=np.int32)
-        lbl[lbl == 255] = 1
+        #lbl[lbl <= 175] = 0
+        #lbl[lbl > 175] = 1
+        #lbl[lbl == 255] = 1
         #lbl[lbl == 255] = -1
+
+        lbl[lbl == 255] = 2
+        #lbl[lbl == 255] = 254
 
         if self._transform:
             return self.transform(img,lbl)
@@ -101,27 +110,3 @@ class Cloud_Data(data.Dataset):
         lbl = lbl.numpy()
         return img, lbl
 
-
-def get_loader(opts):
-    from data_loader import Pascal_Data
-    import os
-    kwargs = {'num_workers': 4} if 'cuda' in str(opts.cuda) else {}
-    if opts.mode in ['train', 'demo']:
-        modes = ['train', 'val']
-    else:
-        modes = [opts.mode, opts.mode]
-    train_loader = data.DataLoader(Cloud_Data(opts.root_dataset,
-                                               image_set=modes[0],
-                                               backbone=opts.backbone,
-                                               transform=True),
-                                   batch_size=1,
-                                   shuffle=True,
-                                   **kwargs)
-    val_loader = data.DataLoader(Cloud_Data(opts.root_dataset,
-                                             image_set=modes[1],
-                                             backbone=opts.backbone,
-                                             transform=True),
-                                 batch_size=1,
-                                 shuffle=False,
-                                 **kwargs)
-    return train_loader, val_loader
