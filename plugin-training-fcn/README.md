@@ -32,7 +32,7 @@ Image dataset needs to be prepared on the host machine and the root path of the 
 **All of the files and folders (total 2 files and 2 folders) must be in one folder, and the folder needs to be mounted as `/storage`**
 
 
-The plugin requires pre-trained fcn model with regard to what the user is trying to train. The docker will provide the pre-trained models with regard to request.
+**The plugin requires a pre-trained fcn model with regard to what the user is trying to train. The docker will provide the pre-trained models with regard to request.**
 
 3) Training
 
