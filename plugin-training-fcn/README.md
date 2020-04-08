@@ -29,12 +29,17 @@ Image dataset needs to be prepared on the host machine and the root path of the 
 }
 ```
 
-**All of the files and folders (total 2 files and 2 folders) must be in one folder, and the folder needs to be mounted as `/storage`**
+3) Pre-trained models
+
+The plugin requires a pre-trained fcn model with regard to what the user is tyring to train. The user need to provide the pre-trained models with regard to request.
+
+- `pretrained_models` is a folder containing pre-trained PyTorch models such as fcn32s_from_caffe.pth
 
 
-**The plugin requires a pre-trained fcn model with regard to what the user is trying to train. The docker will provide the pre-trained models with regard to request.**
+**All of the files and folders (total 2 files and 3 folders) must be in one folder, and the folder needs to be mounted as `/storage`**
 
-3) Training
+
+4) Training
 
 To train, simply run the command below on the host machine. Please make sure to set all the path correct.
 
