@@ -12,20 +12,17 @@ Image dataset needs to be prepared on the host machine and the root path of the 
 
 2) Preparing Model Configuration
 
-- `config.list` is a file containing configuration of the training as shown below; user can add additional configuration for their use (The possible pair of backbone and fcn are: `{resnet, 101}, {resnet, 50}, {vgg, 32s}, {vgg, 16s}, {vgg, 8s}`:
+- `config.list` (or other file name that user named) is a file containing configuration of the training as shown below; user can add additional configuration for their use (The possible pair of backbone and fcn are: `{resnet, 101}, {resnet, 50}, {vgg, 32s}, {vgg, 16s}, {vgg, 8s}`:
 ```
 {
-    "1": 
-    {
-        "max_iteration": 100000, 
-        "lr": 1e-10, 
-        "momentum": 0.99, 
-        "weight_decay": 0.0005, 
-        "interval_validate": 4000,
-        "backbone": "resnet",
-        "fcn": "101",
-        "log_dir": "resnet101"
-    }
+    "max_iteration": 100000, 
+    "lr": 1e-10, 
+    "momentum": 0.99, 
+    "weight_decay": 0.0005, 
+    "interval_validate": 4000,
+    "backbone": "resnet",
+    "fcn": "101",
+    "log_dir": "resnet101"
 }
 ```
 
