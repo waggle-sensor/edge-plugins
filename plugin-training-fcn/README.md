@@ -46,7 +46,7 @@ To train, simply run the command below on the host machine. Please make sure to 
 docker run -d --rm \
   --runtime nvidia \
   --shm-size 16G \
-  -v ${PATH_FOR_OUTPUT_MODELS}:/storage \
+  -v ${PATH_FOR_INPUT_IMAGES_FOLDER}:/storage \
   --config ${FILE NAME} 
 ```
 
