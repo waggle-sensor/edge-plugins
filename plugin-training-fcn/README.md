@@ -49,8 +49,8 @@ To train, simply run the command below on the host machine. Please make sure to 
 docker run -d --rm \
   --runtime nvidia \
   --shm-size 16G \
-  .... to be added
-  -v ${PATH_FOR_OUTPUT_MODELS}:/plugin/checkpoints \
+  -v ${PATH_FOR_OUTPUT_MODELS}:/storage \
+  --config ${FILE NAME} 
 ```
 
 The log of the training can be shown by,
