@@ -4,4 +4,4 @@ RUN pip3 --no-cache-dir install tqdm pyyaml fcn (maybe not fcn, need to check 4/
 
 COPY pytorch_fcn/ /train/
 
-#ENTRYPOINT ["/bin/bash", "run.sh"]
+ENTRYPOINT ["/usr/bin/python3", "test_training.py"]
