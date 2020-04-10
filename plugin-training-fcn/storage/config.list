@@ -1,0 +1,11 @@
+{
+    "max_iteration": 100000, 
+    "lr": 1e-10, 
+    "momentum": 0.99, 
+    "weight_decay": 0.0005, 
+    "interval_validate": 4000,
+    "backbone": "resnet",
+    "fcn": "101",
+    "log_dir": "resnet101"
+}
+

@@ -18,6 +18,8 @@ class FCN(nn.Module):
 
     def __init__(self, n_class=21):
 
+        print('>>>>>>> fcn32n sp')
+
         super(FCN, self).__init__()
         # conv1
         self.conv1_1 = nn.Conv2d(3, 64, 3, padding=100)
@@ -230,6 +232,7 @@ class FCN(nn.Module):
             l2.bias.data = l1.bias.data.view(l2.bias.size())
 
     def resume(self, file, test=False):
+        print('>>>>>> fcn32s, file: ', file)
         import torch
         if test and not file:
             file = 'data/pretrained_models/fcn32s_from_caffe.pth'

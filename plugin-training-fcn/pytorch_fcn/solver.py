@@ -3,17 +3,17 @@ class solver(object):
         from importlib import import_module
         self.data_loader = data_loader
 
-        model_module = import_module('models.{}.fcn{}'.format(opts.backbone, opts.fcn))
-        self.model = model_module.FCN(n_class=2)
+        model_module = import_module('models.{}.fcn{}'.format(opts.cfg['backbone'], opts.cfg['fcn']))
+        self.model = model_module.FCN(n_class=opts.cfg['n_classes'])
 
-        self.model.resume(opts.resume, test=opts.mode in ['val', 'demo'])
+        #self.model.resume(opts.resume, test=opts.mode in ['val'])
 
-        if opts.mode == 'train':
+        if opts.cfg['mode'] == 'train':
             optim_module = import_module('models.{}.helpers'.format(
-                opts.backbone))
+                opts.cfg['backbone']))
             self.optim = optim_module.prepare_optim(opts, self.model)
 
-        self.model.to(opts.cuda)
+        self.model.to(opts.cfg['cuda'])
 
     def cross_entropy2d(self, input, target, weight=None):
         # Softmax + Negative Log Likelihood
