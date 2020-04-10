@@ -24,18 +24,19 @@ The ground truth images (labeled images) must follow Pascal or [Cityscape](https
     "interval_validate": 4000,
     "backbone": "resnet",
     "fcn": "101",
-    "log_dir": "resnet101"
+    "log_dir": "resnet101",
+    "pretrained_net": "", 
 }
 ```
 
 3) Pre-trained models
 
-The plugin requires a pre-trained fcn model with regard to what the user is tyring to train. The user need to provide the pre-trained models with regard to request.
+The plugin requires a pre-trained fcn model with regard to what the user is tyring to train. If the host machine is connected to the internet, it will automatically download the pretrained model from PyTorch server. If users want to provide a pre-trained model, the path of the pretrained model can be listed in the configuration
 
-- `pretrained_models` is a folder containing pre-trained PyTorch models such as fcn32s_from_caffe.pth
+- `pretrained_models` is a path to a pre-rained PyTorch models such as fcn32s_from_caffe.pth
 
 
-**All of the files and folders (total 2 files and 3 folders) must be in one folder, and the folder needs to be mounted as `/storage`**
+**All of the files and folders must be in one folder, and the folder needs to be mounted as `/storage`**
 
 
 4) Training
@@ -70,4 +71,5 @@ $ tensorboard --logdir ${PATH_TO_LOGS}
 ### Adjustment required:
 
 - VGG based training method need to be checked (the models are not learnt throught the method).
+- Adapt color set that is not Pascal or Cityscape.
 
