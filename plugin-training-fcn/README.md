@@ -8,7 +8,9 @@ Image dataset needs to be prepared on the host machine and the root path of the 
 - `image` is a folder containing all images
 - `gt_image` is a folder containing all labeled (ground truth) images
 - `class_names.list` is a file containing class names; one class name per line
-- `color_names.list` is a file containing RGB color value for each class; one class color set per line (R, G, B)
+- `color_names.list` is a file containing RGB color value for each class; one class color set per line (R, G, B) **Will be supported**
+
+The ground truth images (labeled images) must follow VOC lable in terms of coler of class. Data_loader for other class definition type is not ready (4/10/2020).
 
 2) Preparing Model Configuration
 
