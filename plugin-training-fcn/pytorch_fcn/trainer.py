@@ -6,7 +6,7 @@ import numpy as np
 import tqdm
 import fcn
 import math
-import pytz
+#import pytz
 import os
 import imageio
 import shutil
@@ -15,16 +15,19 @@ import shutil
 class Trainer(solver):
     def __init__(self, data_loader, opts):
         super(Trainer, self).__init__(data_loader, opts)
-        self.cuda = opts.cuda
+        self.cuda = opts.cfg['cuda']
         self.opts = opts
         self.train_loader = data_loader[0]
         self.val_loader = data_loader[1]
 
-        if opts.mode in ['val', 'demo']:
+        if opts.cfg['mode'] in ['val']:
             return
 
+        ## UTC time
+        #self.timestamp_start = \
+        #    datetime.datetime.now(pytz.timezone('America/Bogota'))
         self.timestamp_start = \
-            datetime.datetime.now(pytz.timezone('America/Bogota'))
+            datetime.datetime.now()
 
         self.interval_validate = opts.cfg.get('interval_validate',
                                               len(self.train_loader))
@@ -147,7 +150,7 @@ class Trainer(solver):
 
         with open(osp.join(self.out, 'log.csv'), 'a') as f:
             elapsed_time = (
-                datetime.datetime.now(pytz.timezone('America/Bogota')) -
+                datetime.datetime.now() -
                 self.timestamp_start).total_seconds()
             log = [self.epoch, self.iteration] + [''] * 5 + \
                   [val_loss] + list(metrics) + [elapsed_time]
@@ -218,7 +221,7 @@ class Trainer(solver):
 
             with open(osp.join(self.out, 'log.csv'), 'a') as f:
                 elapsed_time = (
-                    datetime.datetime.now(pytz.timezone('America/Bogota')) -
+                    datetime.datetime.now() -
                     self.timestamp_start).total_seconds()
                 log = [self.epoch, self.iteration] + [loss.item()] + \
                     metrics.tolist() + [''] * 5 + [elapsed_time]

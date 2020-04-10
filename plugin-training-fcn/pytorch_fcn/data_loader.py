@@ -23,8 +23,8 @@ class Cloud_Data(data.Dataset):
             self.std = np.array([0.229, 0.224, 0.225])
 
 
-        image = glob.glob(root+'/image/*')
-        lbl = glob.glob(root+'/gt_image/*')
+        image = glob.glob(root+'image/*')
+        lbl = glob.glob(root+'gt_image/*')
 
         tnum = [i for i in range(len(image))]
         tdata = int(len(image)*0.8)
@@ -65,12 +65,12 @@ class Cloud_Data(data.Dataset):
         lbl_file = find_lbl()
         lbl = PIL.Image.open(lbl_file).convert('P')
         lbl = np.array(lbl, dtype=np.int32)
-        #lbl[lbl <= 175] = 0
-        #lbl[lbl > 175] = 1
+        lbl[lbl <= 175] = 0
+        lbl[lbl > 175] = 1
         #lbl[lbl == 255] = 1
         #lbl[lbl == 255] = -1
 
-        lbl[lbl == 255] = 2
+        #lbl[lbl == 255] = 2
         #lbl[lbl == 255] = 254
 
         if self._transform:
