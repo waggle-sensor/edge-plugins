@@ -50,7 +50,8 @@ docker run -d --rm \
   --shm-size 16G \
   -v ${PATH_FOR_INPUT_IMAGES_FOLDER}:/storage \
   ${DOCKER_IMAGE_NAME} \
-  --config ${FILE_NAME: default=config.list} 
+  --config ${FILE_NAME: default=config.list} \
+  --image_type ${SEGMENTATION_CLASS_COLORING_TYPE: default=voc}
 ```
 
 The log of the training can be shown by,
