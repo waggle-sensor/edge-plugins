@@ -47,23 +47,24 @@ docker run -d --rm \
   --runtime nvidia \
   --shm-size 16G \
   -v ${PATH_FOR_INPUT_IMAGES_FOLDER}:/storage \
-  --config ${FILE NAME} 
+  ${DOCKER_IMAGE_NAME} \
+  --config ${FILE_NAME: default=config.list} 
 ```
 
 The log of the training can be shown by,
 
 ```
-docker logs -f .... to be added
+docker logs -f ${DOCKER_IMAGE_NAME}
 ```
 
-After the training is completed checkpoint models can be found in `${PATH_FOR_OUTPUT_MODELS}` on the host machine. The logs are saved in `${PATH_TO_LOGS}` and can be rendered by `tensorboard`.
+After the training is completed checkpoint models and logs can be found in `/storage/${MODEL_NAME}` on the host machine. The logs can be rendered by `tensorboard`.
 
 ```
 $ tensorboard --logdir ${PATH_TO_LOGS}
 ```
 
+
 ### Adjustment required:
 
-- The code is based on a FCN model that provided by PyTorch so that it is always trying to download the base model from PyTorch server. Therefore, the base model need to be added in the package and the path for the base model needs to be re-identified.
+- VGG based training method need to be checked (the models are not learnt throught the method).
 
-- The path for saving log and model need to be adjust to access outside of the docker.
