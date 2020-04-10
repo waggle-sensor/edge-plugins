@@ -19,9 +19,6 @@ docker pull classicblue/plugin-pytorch-fcn
 2) Preparing Dataset
 
 Waggle team will provide an example dataset for cloud segmentation for users of this plugin. Users can download the images from google drive or relevant method:
-```
-download from somewhare that we are going to provide
-```
 
 For internal users who has access to the Alien Machine, The images are in `/storage/sunspot/resized/train/images`.
 
@@ -61,6 +58,20 @@ The plugin requires a pre-trained fcn model with regard to what the user is tyri
 
 
 **All of the files and folders must be in one folder, and the folder needs to be mounted as `/storage`**
+For example:
+```
+foler
+ ├─ images
+ │     ├─ image1
+ │     ├─ image2
+ │     └─ ...      
+ ├─ gt_images
+ │     ├─ gt_image1
+ │     ├─ gt_image2
+ │     └─ ...
+ ├─ class_names.list
+ └─ config.list
+```
 
 
 5) Training
