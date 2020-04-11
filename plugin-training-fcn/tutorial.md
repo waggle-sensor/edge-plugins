@@ -46,7 +46,7 @@ The `config.list` is the configuration of the training such as maximum iteration
 }
 ```
 
-_Note: For now (4/10/2020) the Docker file provides Resnet as backbone network, and fcn101 and fcn50 as fcn network. So user can choose either resnet-fcn101 or resent-fcn50._
+The Docker image provides Resnet as backbone network, and fcn101 and fcn50 as fcn network. So user can choose either resnet-fcn101 or resent-fcn50.
 
 
 5) Pre-trained models
