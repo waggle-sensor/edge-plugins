@@ -106,4 +106,4 @@ docker logs -f ${DOCKER_IMAGE_NAME or CONTAINER_ID}
 
 10) Check Training Logs
 
-After the training is completed checkpoint models and logs can be found in `/storage/${MODEL_NAME}` on the host machine. The logs stored in cvs file, and users can handle the data as they familiar with.
+After the training is completed checkpoint models and logs can be found in `/storage/${MODEL_NAME}` on the host machine. The logs stored in csv file, and users can handle the data as they familiar with.
