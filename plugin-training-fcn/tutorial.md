@@ -57,7 +57,10 @@ For now (4/10/2020) the docker file provides Resnet as backbone network, and fcn
 The plugin requires a pre-trained fcn model with regard to what the user is tyring to train. If the host machine is connected to the internet, it will automatically download the pretrained model from PyTorch server. If users want to provide a pre-trained model, the path of the pretrained model can be listed in the configuration.
 
 
-**All of the files and folders must be in one folder, and the folder needs to be mounted as `/storage`**
+7) Check the folder to mount it to docker file
+
+All of the files and folders must be in one folder, and the folder needs to be mounted as `/storage`.
+
 For example:
 ```
 foler
@@ -75,7 +78,7 @@ foler
 ```
 
 
-5) Training
+8) Training
 
 To train, simply run the command below on the host machine. Please make sure to set all the path correct. The folder that contains training data needs to be mounted to `/storage`.
 
@@ -93,14 +96,14 @@ docker run -d --rm \
   --image_type waggle_cloud
 ```
 
+9) Check Progress
+
 The log of the training can be shown by,
 
 ```
-docker logs -f ${DOCKER_IMAGE_NAME}
+docker logs -f ${DOCKER_IMAGE_NAME or CONTAINER_ID}
 ```
 
-After the training is completed checkpoint models and logs can be found in `/storage/${MODEL_NAME}` on the host machine. The logs can be rendered by `tensorboard`.
+10) Check Training Logs
 
-```
-$ tensorboard --logdir ${PATH_TO_LOGS}
-```
+After the training is completed checkpoint models and logs can be found in `/storage/${MODEL_NAME}` on the host machine. The logs stored in cvs file, and users can handle the data as they familiar with.
