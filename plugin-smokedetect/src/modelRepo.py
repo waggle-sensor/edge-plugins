@@ -9,7 +9,7 @@ class modelRepo:
     TOKEN = os.getenv('TOKEN')
     if TOKEN is None:
         raise EnvironmentError("Failed because {} is not set.".format('TOKEN'))
-    headers = {'Authorization': 'Bearer {}'.format(TOKEN)}
+    headers = {'token': '{}'.format(TOKEN)}
     def __init__(self, baseURL):
         self.baseURL = baseURL
     
@@ -35,7 +35,8 @@ class modelRepo:
         f = open(filePath,'rb')
         files = [('file', f)]
         try:
-            r = requests.request('POST',url,headers=modelRepo.headers,params=payload,files=files)
+            r = requests.request('POST',url,headers=modelRepo.headers,
+                                    data=payload,files=files)
             r.raise_for_status()
         except HTTPError as http_err:
             print(f'HTTP error occurred: {http_err}') 
