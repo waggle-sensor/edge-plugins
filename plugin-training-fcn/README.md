@@ -1,5 +1,5 @@
 ### Training Resnet101-FCN network on PyTorch
-The plugin trains fcn models: resnet101 based fcn101 and fcn50, vgg16 based fcn32, fcn16, and fcn8 (total 5 models). To run the plugin, the user must have Docker engine (greater than 18.X.X) installed on the host. Nvidia CUDA driver (>= 10.1) on the host is preferrable for GPU acceleration.
+The plugin trains fcn models: resnet101 based fcn101 and fcn50. To run the plugin, the user must have Docker engine (greater than 18.X.X) installed on the host. Nvidia CUDA driver (>= 10.1) on the host is preferrable for GPU acceleration.
 
 1) Preparing Dataset
 
@@ -14,7 +14,7 @@ Recommended number of images is 1,000 per classes according to TensorFlow, but u
 
 2) Preparing Model Configuration
 
-- `config.list` (or other file name that user named) is a file containing configuration of the training as shown below; user can add additional configuration for their use (The possible pair of backbone and fcn are: `{resnet, 101}, {resnet, 50}, {vgg, 32s}, {vgg, 16s}, {vgg, 8s}`:
+- `config.list` (or other file name that user named) is a file containing configuration of the training as shown below; user can add additional configuration for their use (The possible pair of backbone and fcn are: `{resnet, 101}, {resnet, 50}:
 ```
 {
     "max_iteration": 100000, 
@@ -29,11 +29,11 @@ Recommended number of images is 1,000 per classes according to TensorFlow, but u
 }
 ```
 
-3) Pre-trained models
+3) Pretrained models
 
 The plugin requires a pre-trained fcn model with regard to what the user is tyring to train. If the host machine is connected to the internet, it will automatically download the pretrained model from PyTorch server. If users want to provide a pre-trained model, the path of the pretrained model can be listed in the configuration.
 
-- `pretrained_net` in configuration is a path to a prerained PyTorch model such as fcn32s_from_caffe.pth
+- `pretrained_net` in configuration is a path to a prerained PyTorch model such as resnet101_from_caffe.pth
 
 
 **All of the files and folders must be in one folder, and the folder needs to be mounted as `/storage`**
@@ -67,6 +67,5 @@ After the training is completed checkpoint models and logs can be found in `/sto
 
 ### Adjustment required:
 
-- VGG based training method need to be checked (the models are not learnt throught the method).
 - Adapt color set that is not Pascal or Cityscape.
 
