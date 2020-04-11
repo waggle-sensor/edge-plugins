@@ -30,7 +30,7 @@ sky
 cloud
 ```
 
-If the color of the class follows Pascal or [Cityscape](https://arxiv.org/pdf/1604.01685.pdf) images, then it does not require `color_names.list` which contians color configuration for each class (R, G, B). However the docker does not support for other color configuration rather than Pascal or Cityscape yet.
+If the color of the class follows Pascal or [Cityscape](https://arxiv.org/pdf/1604.01685.pdf) images or users use waggle cloud images set, then it does not require `color_names.list` which contians color configuration for each class (R, G, B). However the docker does not support for other color configuration rather than Pascal or Cityscape yet.
 
 
 3) Preparing Model Configuration
@@ -76,8 +76,11 @@ foler
 
 5) Training
 
-To train, simply run the command below on the host machine. Please make sure to set all the path correct.
+To train, simply run the command below on the host machine. Please make sure to set all the path correct. The docker assumes that the host machine assure at least 16GB of shared memory.
 
+The folder that contains training data needs to be mounted to `/storage`, and if the users use waggle cloud image, then `--image_type` must be `waggle_cloud`.
+
+For example to use waggle cloud images:
 
 ```
 # skip --runtime nvidia if the host is not CUDA accelerated
@@ -85,9 +88,9 @@ docker run -d --rm \
   --runtime nvidia \
   --shm-size 16G \
   -v ${PATH_FOR_INPUT_IMAGES_FOLDER}:/storage \
-  ${DOCKER_IMAGE_NAME} \
-  --config ${FILE_NAME: default=config.list} 
-  --image_type ${SEGMENTATION_CLASS_COLORING_TYPE: default=voc}
+  classicblue\plugin-training-fcn:0.2.0 \
+  --config config_resnet101.list \ 
+  --image_type waggle_cloud
 ```
 
 The log of the training can be shown by,
