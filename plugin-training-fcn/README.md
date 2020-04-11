@@ -61,11 +61,8 @@ The log of the training can be shown by,
 docker logs -f ${DOCKER_IMAGE_NAME}
 ```
 
-After the training is completed checkpoint models and logs can be found in `/storage/${MODEL_NAME}` on the host machine. The logs can be rendered by `tensorboard`.
+After the training is completed checkpoint models and logs can be found in `/storage/${MODEL_NAME}` on the host machine. The logs stored in cvs file, and users can handle the data as they familiar with.
 
-```
-$ tensorboard --logdir ${PATH_TO_LOGS}
-```
 
 
 ### Adjustment required:
