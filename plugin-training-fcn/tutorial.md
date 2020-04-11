@@ -2,40 +2,36 @@
   
 1) Preparing Docker
 
-Docker is a set of platform as a service products that uses OS-level virtualization to deliver software in packages called containers. Containers are isolated from one another and bundle their own software, libraries, and configuration files.
-
-Users can install the docker in their machine through the APIs that are provided by docker. Go to the website and install the docker on your device with regard to your OS.
+Go to the website and install the Docker on your device with regard to your OS.
 ```
 https://docs.docker.com/get-docker/
 ```
 
-If users already have or installed docker, then you can download our docker file:
+If users already have or installed Docker, then you can download our Docker image:
 ```
 docker pull classicblue/plugin-pytorch-fcn
 ```
 
 2) Preparing Dataset
 
-Waggle team will provide an example dataset for cloud segmentation for users of this plugin. Users can download the images from google drive or relevant method:
+Waggle team provides an example dataset for cloud segmentation for users of this plugin. Users can download the images from google drive or relevant method. Below is the example image from the cloud dataset that Waggle team is providing.
 
-For internal users who has access to the Alien Machine, users can copy images from `/storage/sunspot/resized/train`. The RGB images are stored in `images` folder, and labeled images are stored in `gt_images`. If the name is funcky, we can change this later. 
+<p align="center">
+<kbd><img src="./images/image.jpg" width="250" /></kbd> <kbd><img src="./images/label.jpg" width="250" /></kbd>
+</p>
+
 
 3) Preparing Class List
 
-With the images,`class_names.list` is required. The list need to be stored in the same folder where the `images` and `gt_images` exist. The `class_names.list` is the name of classes that the users target to train for. For example, to train a model for cloud segmentation, the `class_names.list` will be:
+With the images,`class_names.list` is required. The list need to be stored in the same folder where the `images` and `gt_images` exist. The `class_names.list` is the name of classes that the users target to train for. For example, to train a model for cloud segmentation, the `class_names.list` contiains:
 ```
 sky
 cloud
 ```
 
-4) Preparing Class Color List
+4) Preparing Model Configuration
 
-If the color of the class follows Pascal or [Cityscape](https://arxiv.org/pdf/1604.01685.pdf) images, or users use waggle cloud images set, then it does not require `class_colors.list` which contians color configuration for each class (R, G, B). However this segmentation version does not support for other color configuration rather than Pascal or Cityscape as for 4/10/2020.
-
-
-5) Preparing Model Configuration
-
-The `config.list` is the configuration of the training such as maximum iteration (`max_iteration`), learning rate (`lr`),  director name for saving logs and models under `/storage` folder (`log_dir`), and so on. An example of a configuration for training Resnet based fcn101 network is provided below: 
+The `config.list` is the configuration of the training such as maximum iteration (`max_iteration`), learning rate (`lr`),  directory name for saving logs and models (`output_dir`), and so on. An example of a configuration for training Resnet based fcn101 network is provided below: 
 ```
 {
     "max_iteration": 100000, 
@@ -45,23 +41,22 @@ The `config.list` is the configuration of the training such as maximum iteration
     "interval_validate": 4000,
     "backbone": "resnet",
     "fcn": "101",
-    "log_dir": "resnet101"
+    "output_dir": "resnet101",
+    "pretrained_net": ""
 }
 ```
 
-For now (4/10/2020) the docker file provides Resnet as backbone network, and fcn101 and fcn50 as fcn network. So user can choose either resnet-fcn101 or resent-fcn50.
+_Note: For now (4/10/2020) the Docker file provides Resnet as backbone network, and fcn101 and fcn50 as fcn network. So user can choose either resnet-fcn101 or resent-fcn50._
 
 
-6) Pre-trained models
+5) Pre-trained models
 
-The plugin requires a pre-trained fcn model with regard to what the user is tyring to train. If the host machine is connected to the internet, it will automatically download the pretrained model from PyTorch server. If users want to provide a pre-trained model, the path of the pretrained model can be listed in the configuration.
+The plugin requires a pretrained fcn model with regard to what the user is tyring to train. If the host machine is connected to the internet, it will automatically download the pretrained model from the PyTorch server. If users want to provide a pretrained model, the path of the pretrained model can be listed in the configuration `"pretrained_net": ""`.
 
 
-7) Check the folder to mount it to docker file
+6) Check the folder to mount it to Docker container
 
-All of the files and folders must be in one folder, and the folder needs to be mounted as `/storage`.
-
-For example:
+All of the files and folders must be in one folder. For example:
 ```
 foler
  ├─ images
@@ -78,32 +73,63 @@ foler
 ```
 
 
-8) Training
+7) Training
 
 To train, simply run the command below on the host machine. Please make sure to set all the path correct. The folder that contains training data needs to be mounted to `/storage`.
-
-If users use waggle cloud images, then `--image_type` must be `waggle_cloud`.
 
 For example to use waggle cloud images with 16GB shared memory to train resnet-fcn101 network:
 ```
 # skip --runtime nvidia if the host is not CUDA accelerated
 docker run -d --rm \
+  --name plugin-training-fcn \
   --runtime nvidia \
   --shm-size 16G \
   -v ${PATH_FOR_INPUT_IMAGES_FOLDER}:/storage \
   classicblue\plugin-training-fcn:0.2.0 \
-  --config config_resnet101.list \ 
+  --config config.list \ 
   --image_type waggle_cloud
 ```
 
-9) Check Progress
+_Note: if host machine does not support 16GB shared memory, users can reduce the shared memory._
+
+8) Check Progress
 
 The log of the training can be shown by,
 
 ```
-docker logs -f ${DOCKER_IMAGE_NAME or CONTAINER_ID}
+docker logs -f plugin-training-fcn
 ```
 
-10) Check Training Logs
+9) Check Training Logs
 
-After the training is completed checkpoint models and logs can be found in `/storage/${MODEL_NAME}` on the host machine. The logs stored in csv file, and users can handle the data as they familiar with.
+After the training is completed checkpoint models and logs can be found in `${PATH_FOR_INPUT_IMAGES_FOLDER}/MODEL-${output_dir}` on the host machine. The logs are stored in a csv file as shown below, and users can handle the data as they familiar with.
+
+```
+epoch,iteration,train/loss,train/acc,train/acc_cls,train/mean_iu,train/fwavacc,valid/loss,valid/acc,valid/acc_cls,valid/mean_iu,valid/fwavacc,elapsed_time
+0,0,,,,,,249565.46875,0.2775708506944444,0.5,0.1387854253472222,0.07704557715523756,19.109297
+0,0,249565.46875,0.0,0.0,0.0,0.0,,,,,,19.882988
+0,1,249565.46875,0.6447888888888889,0.5,0.32239444444444443,0.41575271123456786,,,,,,20.023459
+0,2,249482.25,1.0,1.0,1.0,1.0,,,,,,20.166056
+0,3,249534.78125,0.30164722222222223,0.5,0.15082361111111112,0.09099104667438272,,,,,,20.306398
+0,4,249511.15625,0.72165,0.5,0.360825,0.5207787225,,,,,,20.449825
+0,5,249447.375,1.0,1.0,1.0,1.0,,,,,,20.589101
+0,6,249528.6875,0.5119666666666667,0.5,0.25598333333333334,0.2621098677777778,,,,,,20.73057
+0,7,249434.390625,1.0,1.0,1.0,1.0,,,,,,20.870793
+```
+
+In addition to the logs, validation results are stored in `${PATH_FOR_INPUT_IMAGES_FOLDER}/MODEL-${output_dir}/visualization_viz`. 
+
+The results showed in order as listed below:
+```
++-----------------------+-----------------------+---------------------------+
+|  original image       | ground truth image    | overlap of the two images |
++-----------------------+-----------------------+---------------------------+
+|  original image       | estimation result     | overlap of the two images |
++-----------------------+-----------------------+---------------------------+
+```
+
+Below is sample validation results:
+
+<p align="center">
+<img src="./images/iter000000100000.jpg" width="500"/>
+</p>
