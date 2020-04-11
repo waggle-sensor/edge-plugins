@@ -1,7 +1,5 @@
 ### Let's start training a semantic segmentation deep learning model
   
-The plugin runs PyTorch based FCN models for traning. To run the plugin, users must have Docker engine (greater than 18.X.X) installed on the host. Nvidia CUDA driver (>= 10.1) on the host is preferrable for GPU acceleration.
-  
 1) Preparing Docker
 
 Docker is a set of platform as a service products that uses OS-level virtualization to deliver software in packages called containers. Containers are isolated from one another and bundle their own software, libraries, and configuration files.
@@ -20,20 +18,22 @@ docker pull classicblue/plugin-pytorch-fcn
 
 Waggle team will provide an example dataset for cloud segmentation for users of this plugin. Users can download the images from google drive or relevant method:
 
-For internal users who has access to the Alien Machine, The images are in `/storage/sunspot/resized/train/images`.
+For internal users who has access to the Alien Machine, users can copy images from `/storage/sunspot/resized/train`. The RGB images are stored in `images` folder, and labeled images are stored in `gt_images`. If the name is funcky, we can change this later. 
 
-The RGB images must be stored in `images` folder, and labeled images must be stored in `gt_images`. If the name is funcky, we can change this later. Recommended number of images is 1,000 per classes according to TensorFlow, but user can try with less number of images.
+3) Preparing Class List
 
-With the images,`class_names.list` is required to be stored in the same folder where the `images` and `gt_images` exist. The `class_names.list` is the name of classes that the users target to train for. For example, to train a model for cloud segmentation, the `class_names.list` will be:
+With the images,`class_names.list` is required. The list need to be stored in the same folder where the `images` and `gt_images` exist. The `class_names.list` is the name of classes that the users target to train for. For example, to train a model for cloud segmentation, the `class_names.list` will be:
 ```
 sky
 cloud
 ```
 
-If the color of the class follows Pascal or [Cityscape](https://arxiv.org/pdf/1604.01685.pdf) images or users use waggle cloud images set, then it does not require `color_names.list` which contians color configuration for each class (R, G, B). However the docker does not support for other color configuration rather than Pascal or Cityscape yet.
+4) Preparing Class Color List
+
+If the color of the class follows Pascal or [Cityscape](https://arxiv.org/pdf/1604.01685.pdf) images, or users use waggle cloud images set, then it does not require `class_colors.list` which contians color configuration for each class (R, G, B). However this segmentation version does not support for other color configuration rather than Pascal or Cityscape as for 4/10/2020.
 
 
-3) Preparing Model Configuration
+5) Preparing Model Configuration
 
 The `config.list` is the configuration of the training such as maximum iteration (`max_iteration`), learning rate (`lr`),  director name for saving logs and models under `/storage` folder (`log_dir`), and so on. An example of a configuration for training Resnet based fcn101 network is provided below: 
 ```
@@ -52,7 +52,7 @@ The `config.list` is the configuration of the training such as maximum iteration
 For now (4/10/2020) the docker file provides Resnet as backbone network, and fcn101 and fcn50 as fcn network. So user can choose either resnet-fcn101 or resent-fcn50.
 
 
-4) Pre-trained models
+6) Pre-trained models
 
 The plugin requires a pre-trained fcn model with regard to what the user is tyring to train. If the host machine is connected to the internet, it will automatically download the pretrained model from PyTorch server. If users want to provide a pre-trained model, the path of the pretrained model can be listed in the configuration.
 
@@ -70,18 +70,18 @@ foler
  │     ├─ gt_image2
  │     └─ ...
  ├─ class_names.list
+ ├─ class_colors.list (not supported yet)
  └─ config.list
 ```
 
 
 5) Training
 
-To train, simply run the command below on the host machine. Please make sure to set all the path correct. The docker assumes that the host machine assure at least 16GB of shared memory.
+To train, simply run the command below on the host machine. Please make sure to set all the path correct. The folder that contains training data needs to be mounted to `/storage`.
 
-The folder that contains training data needs to be mounted to `/storage`, and if the users use waggle cloud image, then `--image_type` must be `waggle_cloud`.
+If users use waggle cloud images, then `--image_type` must be `waggle_cloud`.
 
-For example to use waggle cloud images:
-
+For example to use waggle cloud images with 16GB shared memory to train resnet-fcn101 network:
 ```
 # skip --runtime nvidia if the host is not CUDA accelerated
 docker run -d --rm \
