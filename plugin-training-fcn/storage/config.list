@@ -1,5 +1,5 @@
 {
-    "max_iteration": 100000, 
+    "max_iteration": 8000, 
     "lr": 1e-10, 
     "momentum": 0.99, 
     "weight_decay": 0.0005, 
