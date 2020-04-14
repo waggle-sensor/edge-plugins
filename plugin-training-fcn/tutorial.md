@@ -85,7 +85,7 @@ docker run -d --rm \
   --runtime nvidia \
   --shm-size 16G \
   -v ${PATH_FOR_INPUT_IMAGES_FOLDER}:/storage \
-  classicblue\plugin-training-fcn:0.2.0 \
+  classicblue/plugin-training-fcn:0.2.0 \
   --config config.list \ 
   --image_type waggle_cloud
 ```
