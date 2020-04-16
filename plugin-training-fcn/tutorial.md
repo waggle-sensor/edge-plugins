@@ -31,7 +31,7 @@ Below is the example image from the cloud dataset that Waggle team is providing.
 
 3) Preparing Class List
 
-With the images,`class_names.list` is required. The list need to be stored in the same folder where the `images` and `gt_images` exist. The `class_names.list` is the name of classes that the users target to train for. For example, to train a model for cloud segmentation, the `class_names.list` contiains:
+With the images,`class_names.list` is required. The list need to be stored in the same folder where the `images` and `labels` exist. The `class_names.list` is the name of classes that the users target to train for. For example, to train a model for cloud segmentation, the `class_names.list` contiains:
 ```
 sky
 cloud
@@ -71,9 +71,9 @@ foler
  │     ├─ image1
  │     ├─ image2
  │     └─ ...      
- ├─ gt_images
- │     ├─ gt_image1
- │     ├─ gt_image2
+ ├─ labels
+ │     ├─ image1
+ │     ├─ image2
  │     └─ ...
  ├─ class_names.list
  ├─ class_colors.list (not supported yet)
