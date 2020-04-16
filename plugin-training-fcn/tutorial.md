@@ -14,7 +14,15 @@ docker pull classicblue/plugin-pytorch-fcn:0.2.0
 
 2) Preparing Dataset
 
-Waggle team provides an example dataset for cloud segmentation for users of this plugin. Users can download the images from google drive or relevant method. Below is the example image from the cloud dataset that Waggle team is providing.
+Waggle team provides an example dataset for cloud segmentation for users of this plugin. Users can download the images through below:
+
+```
+from torchvision.datasets.utils import download_and_extract_archive
+url = 'https://web.lcrc.anl.gov/public/waggle/datasets/WaggleClouds.tar.gz'
+download_and_extract_archive(url, 'download', 'data')
+```
+
+Below is the example image from the cloud dataset that Waggle team is providing.
 
 <p align="center">
 <kbd><img src="./images/image.jpg" width="250" /></kbd> <kbd><img src="./images/label.jpg" width="250" /></kbd>
