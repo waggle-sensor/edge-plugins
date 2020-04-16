@@ -83,7 +83,7 @@ if __name__ == "__main__":
     now = datetime.datetime.now().strftime('%Y_%m_%d-%H_%M_%S')
     opts.cfg['utc_time'] = now
 
-    opts.out = get_log_dir(opts.cfg['log_dir'], 1, opts.cfg, root)
+    opts.out = get_log_dir(opts.cfg['output_dir'], 1, opts.cfg, root)
 
     print(opts.cfg)
 
