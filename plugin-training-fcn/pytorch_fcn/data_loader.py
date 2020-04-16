@@ -23,8 +23,9 @@ class Cloud_Data(data.Dataset):
             self.std = np.array([0.229, 0.224, 0.225])
 
 
+        ## images labels
         image = glob.glob(root+'image/*')
-        lbl = glob.glob(root+'gt_image/*')
+        lbl = glob.glob(root+'labels/*')
 
         tnum = [i for i in range(len(image))]
         tdata = int(len(image)*0.8)
