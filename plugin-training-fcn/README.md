@@ -6,7 +6,7 @@ The plugin trains fcn models: resnet101 based fcn101 and fcn50. To run the plugi
 Image dataset needs to be prepared on the host machine and the root path of the dataset will be mounted onto the plugin container. For training labeled images are also required. The following files and folders need to be prepared as well.
 
 - `images` is a folder containing all images
-- `gt_images` is a folder containing all labeled (ground truth) images
+- `labels` is a folder containing all labeled (ground truth) images
 - `class_names.list` is a file containing class names; one class name per line
 - `color_names.list` is a file containing RGB color value for each class; one class color set per line (R, G, B) **Will be supported**
 
