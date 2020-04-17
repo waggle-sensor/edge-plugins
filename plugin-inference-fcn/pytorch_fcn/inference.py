@@ -15,12 +15,14 @@ def run(file_path, model, cfg):
 
     print(cfg)
 
-    output_base = './' + cfg['output_dir']
+    output_base = '/storage/' + cfg['output_dir']
     if not osp.exists(output_base):
         os.makedirs(output_base)
 
     output_name = os.path.basename(file_path) + "_out.jpg"
     output_path = os.path.join(output_base, output_name)
+
+    print(output_path)
 
     input_image = Image.open(file_path)
     input_image = input_image.resize((300, 300))
@@ -63,7 +65,8 @@ if __name__ == "__main__":
         parser.print_help()
         exit(0)
 
-    with open(args.config, 'r') as f:
+    config_path = '/storage/' + args.config
+    with open(config_path, 'r') as f:
         configurations = json.load(f)
 
     opts = SimpleNamespace()
@@ -74,9 +77,11 @@ if __name__ == "__main__":
     model_module = import_module('models.{}.fcn{}'.format(opts.cfg['backbone'], opts.cfg['fcn']))
     model = model_module.FCN(n_class=int(opts.cfg['n_classes']))
 
-    checkpoint = torch.load(opts.cfg['model'])
+    model_path = '/storage/' + opts.cfg['model']
+    checkpoint = torch.load(model_path)
     model.load_state_dict(checkpoint['model_state_dict'])
 
 
-    run(args.image, model, opts.cfg)
+    image_path = '/storage/data/' + args.image
+    run(image_path, model, opts.cfg)
 
