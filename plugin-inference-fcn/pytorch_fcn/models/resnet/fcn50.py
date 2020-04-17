@@ -11,13 +11,3 @@ class FCN(nn.Module):
     def forward(self, x, debug=False):
         return self.fcn(x)['out']
 
-    def resume(self, file, test=False):
-        import torch
-        if test and not file:
-            self.fcn = fcn_resnet50(pretrained=True, num_classes=21)
-            return
-        if file:
-            print('Loading checkpoint from: ' + file)
-            checkpoint = torch.load(file)
-            checkpoint = checkpoint['model_state_dict']
-            self.load_state_dict(checkpoint)
