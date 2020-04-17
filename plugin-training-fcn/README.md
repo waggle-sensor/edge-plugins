@@ -14,7 +14,7 @@ Recommended number of images is 1,000 per classes according to TensorFlow, but u
 
 2) Preparing Model Configuration
 
-- `config.list` (or other file name that user named) is a file containing configuration of the training as shown below; user can add additional configuration for their use (The possible pair of backbone and fcn are: `{resnet, 101}, {resnet, 50}:
+- `config.list` (or other file name that user named) is a file containing configuration of the training as shown below; user can modify configuration for their use (The possible pair of backbone and fcn are: `{resnet, 101}, {resnet, 50}:
 ```
 {
     "max_iteration": 100000, 
