@@ -1,0 +1,7 @@
+{
+    "backbone": "resnet",
+    "fcn": "101",
+    "output_dir": "output",
+    "model": "/storage/fcn/sp_fcn_pytorch/logs/MODEL-resnet101/model_best.pth.tar",
+    "n_classes": "2"
+}
