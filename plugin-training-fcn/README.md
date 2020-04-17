@@ -3,7 +3,7 @@ The plugin trains fcn models: resnet101 based fcn101 and fcn50. To run the plugi
 
 1) Preparing Dataset
 
-Image dataset needs to be prepared on the host machine and the root path of the dataset will be mounted onto the plugin container. For training labeled images are also required. The following files and folders need to be prepared as well.
+Image dataset including labeled images needs to be prepared on the host machine and the root path of the dataset needs to be mounted onto the plugin container. For training, the following files and folders need to be prepared as well.
 
 - `images` is a folder containing all images
 - `labels` is a folder containing all labeled (ground truth) images
