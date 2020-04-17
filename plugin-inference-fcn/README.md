@@ -32,7 +32,7 @@ To inference, simply run the command below on the host machine. Please make sure
 
 
 ```
-docker run -d --rm --runtime nvidia -v ${PATH_FOR_INPUT_IMAGES_FOLDER}:/storage ${DOCKER_IMAGE_NAME} --config ${FILE_NAME: default=config.list} --image ${PATH_TO_AN_IMAGE}
+docker run -d --rm --runtime nvidia -v ${ROOT_PATH_FOR_CONFIGURATION}:/storage ${DOCKER_IMAGE_NAME} --config ${FILE_NAME: default=config.list} --image ${PATH_TO_AN_IMAGE}
 ```
 
 The result of the inference is an image, and the image is stored in `/storage/${OUTPUT_DIR}`.
