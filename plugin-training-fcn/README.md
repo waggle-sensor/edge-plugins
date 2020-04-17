@@ -1,4 +1,4 @@
-### Training Resnet101-FCN network on PyTorch
+### Training Resnet-FCN network on PyTorch
 The plugin trains fcn models: resnet101 based fcn101 and fcn50. To run the plugin, the user must have Docker engine (greater than 18.X.X) installed on the host. Nvidia CUDA driver (>= 10.1) on the host is preferrable for GPU acceleration.
 
 1) Preparing Dataset
