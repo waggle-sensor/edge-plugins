@@ -10,7 +10,7 @@ The plugin inference images using fcn models: resnet101 based fcn101 and fcn50. 
     "backbone": "resnet",
     "fcn": "101",
     "output_dir": "output",
-    "model": "logs/MODEL-resnet101/model_best.pth.tar",
+    "model": "resnet_fcn101.pth.tar",
     "n_classes": "2"
 }
 ```
@@ -18,21 +18,26 @@ The plugin inference images using fcn models: resnet101 based fcn101 and fcn50. 
 
 2) Trained model
 
-The plugin requires a base fcn model with regard to what the user is tyring to inference. The host machine will automatically download the model from PyTorch server. Based on the fcn net, the inference script adds weight from the model that user adds on configuration file, `config.list`.
+The plugin requires a base fcn model with regard to what the user is tyring to inference. The host machine will automatically download the model from PyTorch server. Based on the fcn net, the inference script adds weight from the model that user adds on configuration file, `config.list`. It assumes that the model is stored in the folder where `config.list` is.
 
 - `model` in the configuration is a path to a prerained PyTorch model.
 
 
+
+3) Preparing Images
+
+The plugin requires an image for inference, and it assumes that the image is stored in `data` folder under the folder where `config.list` is.
+
 **All of the files and folders must be in one folder, and the folder needs to be mounted as `/storage`. The Docker image assumes that the config.list and the trained model are in under `/storage`**
 
 
-3) Inference
+4) Inference
 
 To inference, simply run the command below on the host machine. Please make sure to set all the path correct.
 
 
 ```
-docker run -d --rm --runtime nvidia -v ${ROOT_PATH_FOR_CONFIGURATION}:/storage ${DOCKER_IMAGE_NAME} --config ${FILE_NAME: default=config.list} --image ${PATH_TO_AN_IMAGE}
+docker run -d --rm --runtime nvidia -v ${ROOT_PATH_FOR_CONFIGURATION}:/storage ${DOCKER_IMAGE_NAME} --config ${FILE_NAME: default=config.list} --image ${IMAGE_NAME}
 ```
 
 The result of the inference is an image, and the image is stored in `/storage/${OUTPUT_DIR}`.
