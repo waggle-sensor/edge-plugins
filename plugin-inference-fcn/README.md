@@ -28,7 +28,17 @@ The plugin requires a base fcn model with regard to what the user is tyring to i
 
 The plugin requires an image for inference, and it assumes that the image is stored in `data` folder under the folder where `config.list` is.
 
-**All of the files and folders must be in one folder, and the folder needs to be mounted as `/storage`. The Docker image assumes that the config.list and the trained model are in under `/storage`**
+**All of the files and folders must be in one folder, and the folder needs to be mounted as `/storage`. The Docker image assumes that the config.list and the trained model are in under `/storage`** like below:
+
+```
+foler
+ ├─ data
+ │     ├─ image1
+ │     ├─ image2
+ │     └─ ...      
+ ├─ class_names.list
+ └─ config.list
+```
 
 
 4) Inference
