@@ -6,12 +6,10 @@ class solver(object):
         model_module = import_module('models.{}.fcn{}'.format(opts.cfg['backbone'], opts.cfg['fcn']))
         self.model = model_module.FCN(n_class=opts.cfg['n_classes'])
 
-        #self.model.resume(opts.resume, test=opts.mode in ['val'])
+        self.model.resume(opts.cfg['pretrained'])
 
-        if opts.cfg['mode'] == 'train':
-            optim_module = import_module('models.{}.helpers'.format(
-                opts.cfg['backbone']))
-            self.optim = optim_module.prepare_optim(opts, self.model)
+        optim_module = import_module('models.{}.helpers'.format(opts.cfg['backbone']))
+        self.optim = optim_module.prepare_optim(opts, self.model)
 
         self.model.to(opts.cfg['cuda'])
 

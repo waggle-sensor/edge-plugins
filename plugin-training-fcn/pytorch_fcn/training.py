@@ -1,6 +1,5 @@
 import os
 import os.path as osp
-import yaml
 
 import torch
 import numpy as np
@@ -24,7 +23,7 @@ def get_log_dir(model_name, config_id, cfg, root):
     if not osp.exists(log_dir):
         os.makedirs(log_dir)
     with open(osp.join(log_dir, 'config.list'), 'w') as f:
-        yaml.safe_dump(cfg, f, default_flow_style=False)
+        f.write(json.dumps(cfg, indent=4, sort_keys=True))
     return log_dir
 
 
@@ -47,9 +46,8 @@ if __name__ == "__main__":
     opts = SimpleNamespace()
     opts.cfg = configurations
 
-    #print(opts.cfg)
 
-    if opts.cfg['backbone'] != 'ressnet':
+    if opts.cfg['backbone'] != 'resnet':
         raise Exception('Not supported')
 
 
@@ -60,7 +58,6 @@ if __name__ == "__main__":
             class_names.append(line.strip())
 
     class_names = np.array(class_names)
-    #print(class_names)
 
     cuda = torch.cuda.is_available()
     #print(cuda)
@@ -68,12 +65,7 @@ if __name__ == "__main__":
     opts.cfg['cuda'] = 'cuda' if cuda else 'cpu'
     opts.cfg['mode'] = 'train'
     opts.cfg['n_classes'] = len(class_names)
-
-    #opts.cfg['pretrained'] = ''
-
-    '''
-    opts.resume = ''
-    '''
+    opts.cfg['pretrained'] = root + opts.cfg['pretrained']
 
     now = datetime.datetime.now().strftime('%Y_%m_%d-%H_%M_%S')
     opts.cfg['utc_time'] = now
@@ -115,11 +107,14 @@ if __name__ == "__main__":
 
     start_epoch = 0
     start_iteration = 0
+
     '''
-    if opts.resume:
+    if opts.cfg['pretrained']:
+        checkpoint = torch.load(opts.cfg['pretrained'])
         start_epoch = checkpoint['epoch']
         start_iteration = checkpoint['iteration']
     '''
+
     trainer.epoch = start_epoch
     trainer.iteration = start_iteration
     trainer.Train()
