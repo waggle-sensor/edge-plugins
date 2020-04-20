@@ -31,6 +31,8 @@ Recommended number of images is 1,000 per classes according to TensorFlow, but u
 }
 ```
 
+`n_workers` in the configuration is how many workers will be used for read images to reduce time for reading images.
+
 3) Pretrained models
 
 The plugin requires a pre-trained fcn model with regard to what the user is tyring to train. If the host machine is connected to the internet, it will automatically download the pretrained model from PyTorch server. If users want to provide a pre-trained model, the path of the pretrained model can be listed in the configuration.
