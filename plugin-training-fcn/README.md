@@ -22,10 +22,12 @@ Recommended number of images is 1,000 per classes according to TensorFlow, but u
     "momentum": 0.99, 
     "weight_decay": 0.0005, 
     "interval_validate": 4000,
+    "batch_siz": 1,
     "backbone": "resnet",
     "fcn": "101",
     "output_dir": "resnet101",
-    "pretrained_net": ""
+    "pretrained_net": "",
+    "n_workers": 4
 }
 ```
 
