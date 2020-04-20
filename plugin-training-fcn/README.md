@@ -17,17 +17,18 @@ Recommended number of images is 1,000 per classes according to TensorFlow, but u
 - `config.list` (or other file name that user named) is a file containing configuration of the training as shown below; user can modify configuration for their use (The possible pair of backbone and fcn are: `{resnet, 101}, {resnet, 50}:
 ```
 {
-    "max_iteration": 100000, 
+    "max_iteration": 8000, 
     "lr": 1e-10, 
     "momentum": 0.99, 
     "weight_decay": 0.0005, 
     "interval_validate": 4000,
-    "batch_siz": 1,
+    "batch_size": 1,
     "backbone": "resnet",
     "fcn": "101",
     "output_dir": "resnet101",
     "pretrained_net": "",
-    "n_workers": 4
+    "n_workers": 6,
+    "pretrained": "model_best.pth.tar"
 }
 ```
 
