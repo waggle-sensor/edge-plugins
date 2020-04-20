@@ -33,6 +33,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--config', type=str, default='config.list', help='path to train configuration list')
+    parser.add_argument('--image_type', type=str, default='voc', help='segmentation class coloring type')
     args = parser.parse_args()
 
     ## root folder for the images and label images
@@ -46,6 +47,11 @@ if __name__ == "__main__":
     opts = SimpleNamespace()
     opts.cfg = configurations
 
+    #print(opts.cfg)
+
+    if opts.cfg['backbone'] != 'ressnet':
+        raise Exception('Not supported')
+
 
     ## read file that contains class names
     class_names = []
@@ -54,29 +60,18 @@ if __name__ == "__main__":
             class_names.append(line.strip())
 
     class_names = np.array(class_names)
-    print(class_names)
+    #print(class_names)
 
     cuda = torch.cuda.is_available()
-    print(cuda)
+    #print(cuda)
 
     opts.cfg['cuda'] = 'cuda' if cuda else 'cpu'
     opts.cfg['mode'] = 'train'
     opts.cfg['n_classes'] = len(class_names)
 
-    opts.cfg['pretrained'] = ''
+    #opts.cfg['pretrained'] = ''
 
     '''
-    opts.cuda = 'cuda' if cuda else 'cpu'
-    opts.mode = 'train'
-
-    opts.n_classes = len(class_names)
-    opts.backbone = opts.cfg['backbone']
-    opts.fcn = opts.cfg['fcn']
-
-    opts.cfg['cuda'] = opts.cuda
-    opts.cfg['mode'] = opts.mode
-    opts.cfg['n_classes'] = opts.n_classes
-
     opts.resume = ''
     '''
 
@@ -85,18 +80,19 @@ if __name__ == "__main__":
 
     opts.out = get_log_dir(opts.cfg['output_dir'], 1, opts.cfg, root)
 
-    print(opts.cfg)
+    #print(opts.cfg)
 
 
-    kwargs = {'num_workers': 4} if cuda else {}
+    kwargs = {'num_workers': opts.cfg['n_workers']} if cuda else {}
     train_loader = torch.utils.data.DataLoader(
         Cloud_Data(
             class_names,
             root,
+            args.image_type,
             image_set='train',
             backbone=opts.cfg['backbone'],
             transform=True),
-        batch_size=1,
+        batch_size=opts.cfg['batch_size'],
         shuffle=True,
         **kwargs
     )
@@ -105,10 +101,11 @@ if __name__ == "__main__":
         Cloud_Data(
             class_names,
             root,
+            args.image_type,
             image_set='val',
             backbone=opts.cfg['backbone'],
             transform=True),
-        batch_size=1,
+        batch_size=opts.cfg['batch_size'],
         shuffle=False,
         **kwargs
     )
