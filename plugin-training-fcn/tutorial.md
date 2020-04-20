@@ -47,7 +47,7 @@ cloud
 The `config.list` is the configuration of the training such as maximum iteration (`max_iteration`), learning rate (`lr`),  directory name for saving logs and models (`output_dir`), and so on. An example of a configuration for training Resnet based fcn101 network is provided below: 
 ```
 {
-    "max_iteration": 8000, 
+    "max_iteration": 100000, 
     "lr": 1e-10, 
     "momentum": 0.99, 
     "weight_decay": 0.0005, 
