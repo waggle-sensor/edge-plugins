@@ -9,7 +9,7 @@ https://docs.docker.com/get-docker/
 
 If users already have or installed Docker, then you can download our Docker image:
 ```
-docker pull classicblue/plugin-training-fcn:0.2.0
+docker pull waggle/plugin-training-fcn
 ```
 
 2) Preparing Dataset
