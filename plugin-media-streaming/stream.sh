@@ -23,14 +23,12 @@ do
 done
 set -- "${unparsed_parameters[@]}"
 
-echo "--------------"
-echo $input_format
-echo $video_size
-echo $unparsed_parameters
-echo "------------"
-echo $@
+cp _ffserver.conf /etc/ffserver.conf
+sed -i \
+  -e "s/\FORMAT/${input_format}/" \
+  -e "s/VIDEO_SIZE/${video_size}/" \
+  /etc/ffserver.conf
 
-cp _ffserver.conf a.conf
-sed -i "s/\FORMAT/${input_format}/" a.conf
-sed -i "s/VIDEO_SIZE/${video_size}/" a.conf
-
+ffserver &
+sleep 1
+ffmpeg -loglevel panic $@ http://localhost:8090/feed1.ffm

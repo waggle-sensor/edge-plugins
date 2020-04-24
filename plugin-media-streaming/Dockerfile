@@ -6,4 +6,7 @@ RUN apt-get update \
   nano \
   && rm -rf /var/lib/apt/lists/*
 
+WORKDIR /app
+COPY _ffserver.conf stream.sh /app/
+
 ENTRYPOINT ["/bin/bash", "stream.sh"]
