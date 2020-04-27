@@ -14,8 +14,10 @@ To run,
 # streaming fed from a down-facing camera
 device=/dev/waggle_cam_bottom
 version=0.1.0
+name=cam_bottom_live
 $ docker run -d --rm \
   --device ${device} \
+  --name ${name} \
   waggle/plugin-media-streaming:${version} \
   -f v4l2 \
   -input_format mjpeg \
@@ -27,7 +29,12 @@ $ docker run -d --rm \
 To get live feed,
 
 ```
-$ ffplay http://localhost:8090/live
+$ ffplay http://${name}:8090/live
 # or
-$ ffmpeg -i http://localhost:8090/live live.mp4
+$ ffmpeg -i http://${name}:8090/live live.mp4
+# or
+$ python3
+>> import cv2
+>> cap = cv2.VideoCapture('http://${name}:8090/live')
+>> ret, image = cap.read()
 ```
