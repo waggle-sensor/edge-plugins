@@ -1,12 +1,15 @@
-### Training Resnet-FCN network on PyTorch
-The plugin trains fcn models: resnet101 based fcn101 and fcn50. To run the plugin, the user must have Docker engine (greater than 18.X.X) installed on the host. Nvidia CUDA driver (>= 10.1) on the host is preferrable for GPU acceleration.
+## Train Resnet-FCN network on PyTorch and Test the Model
+The plugin trains fcn models and tests the models: resnet101 based fcn101 and fcn50. To run the plugin, the user must have Docker engine (greater than 18.X.X) installed on the host. Nvidia CUDA driver (>= 10.1) on the host is preferrable for GPU acceleration.
+
+
+### Train a Model
 
 1) Preparing Dataset
 
 Image dataset including labeled images needs to be prepared on the host machine and the root path of the dataset needs to be mounted onto the plugin container. For training, the following files and folders need to be prepared as well.
 
-- `images` is a folder containing all images
-- `labels` is a folder containing all labeled (ground truth) images
+- `train/images` is a folder containing all images
+- `train/labels` is a folder containing all labeled (ground truth) images
 - `class_names.list` is a file containing class names; one class name per line
 - `color_names.list` is a file containing RGB color value for each class; one class color set per line (R, G, B) **Will be supported**
 
@@ -17,7 +20,7 @@ Recommended number of images is 1,000 per classes according to TensorFlow, but u
 - `config.list` (or other file name that user named) is a file containing configuration of the training as shown below; user can modify configuration for their use (The possible pair of backbone and fcn are: `{resnet, 101}, {resnet, 50}:
 ```
 {
-    "max_iteration": 8000, 
+    "max_iteration": 100000, 
     "lr": 1e-10, 
     "momentum": 0.99, 
     "weight_decay": 0.0005, 
@@ -28,7 +31,7 @@ Recommended number of images is 1,000 per classes according to TensorFlow, but u
     "output_dir": "resnet101",
     "pretrained_net": "",
     "n_workers": 6,
-    "pretrained": "model_best.pth.tar"
+    "mode": "train"
 }
 ```
 
@@ -42,6 +45,26 @@ The plugin requires a pre-trained fcn model with regard to what the user is tyri
 
 
 **All of the files and folders must be in one folder, and the folder needs to be mounted as `/storage`**
+
+All of the files and folders must be in one folder. For example:
+```
+foler
+ ├─ train
+ │     ├─ images
+ │     │     ├─ image1
+ │     │     ├─ image2
+ │     │     └─ ...
+ │     └─ labels
+ │           ├─ image1
+ │           ├─ image2
+ │           └─ ...
+ ├─ class_names.list
+ ├─ config.list
+ ├─ pretrained_model (optional, such as model_best.pth.tar)
+ └─ class_colors.list (not supported yet)
+```
+
+
 
 
 4) Training
@@ -62,6 +85,61 @@ docker logs -f ${DOCKER_IMAGE_NAME}
 
 After the training is completed checkpoint models and logs can be found in `/storage/${MODEL_NAME}` on the host machine. The logs stored in csv file, and users can handle the data as they familiar with.
 
+
+
+### Test the Model
+
+
+1) Preparing Inference Configuration
+
+- `config.list` (or other file name that user named) is a file containing configuration of the inference as shown below; user can modify configuration for their use (The possible pair of backbone and fcn are: `{resnet, 101}, {resnet, 50}:
+```
+{
+    "backbone": "resnet",
+    "fcn": "101",
+    "output_dir": "output",
+    "model": "resnet_fcn101.pth.tar",
+    "mode": "test"
+}
+```
+
+
+2) Trained model
+
+The plugin requires a base fcn model with regard to what the user is tyring to inference. The host machine will automatically download the model from PyTorch server. Based on the fcn net, the inference script adds weight from the model that user adds on configuration file, `config.list`. It assumes that the model is stored in the folder where `config.list` is.
+
+- `model` in the configuration is a path to a prerained PyTorch model.
+
+
+
+3) Preparing Images
+
+The plugin requires an image for inference, and it assumes that the image is stored in `data` folder under the folder where `config.list` is.
+
+**All of the files and folders must be in one folder, and the folder needs to be mounted as `/storage`. The Docker image assumes that the config.list and the trained model are in under `/storage`** like below:
+
+```
+foler
+ ├─ test
+ │     └─ images
+ │           ├─ image1
+ │           ├─ image2
+ │           └─ ...      
+ ├─ class_names.list
+ └─ config.list
+```
+
+
+4) Inference
+
+To inference, simply run the command below on the host machine. Please make sure to set all the path correct.
+
+
+```
+docker run -d --rm --runtime nvidia -v ${ROOT_PATH_FOR_CONFIGURATION}:/storage ${DOCKER_IMAGE_NAME} --config ${FILE_NAME: default=config.list}
+```
+
+The result of the inference is an image, and the image is stored in `/storage/${OUTPUT_DIR}`.
 
 
 ### Adjustment required:

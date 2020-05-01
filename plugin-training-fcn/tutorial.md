@@ -75,14 +75,15 @@ The plugin requires a pretrained fcn model with regard to what the user is tyrin
 All of the files and folders must be in one folder. For example:
 ```
 foler
- ├─ images
- │     ├─ image1
- │     ├─ image2
- │     └─ ...      
- ├─ labels
- │     ├─ image1
- │     ├─ image2
- │     └─ ...
+ ├─ train
+ │     ├─ images
+ │     │     ├─ image1
+ │     │     ├─ image2
+ │     │     └─ ...      
+ │     └─ labels
+ │           ├─ image1
+ │           ├─ image2
+ │           └─ ...
  ├─ class_names.list
  ├─ config.list
  ├─ pretrained_model (optional, such as model_best.pth.tar)
