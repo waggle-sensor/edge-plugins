@@ -58,7 +58,7 @@ The `config.list` is the configuration of the training such as maximum iteration
     "output_dir": "resnet101",
     "pretrained_net": "",
     "n_workers": 6,
-    "pretrained": ""
+    "mode": "train"
 }
 ```
 
