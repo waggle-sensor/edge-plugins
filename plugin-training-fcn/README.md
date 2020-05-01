@@ -74,7 +74,7 @@ To train, simply run the command below on the host machine. Please make sure to 
 
 ```
 # skip --runtime nvidia if the host is not CUDA accelerated
-docker run -d --rm --runtime nvidia --shm-size 16G -v ${PATH_FOR_INPUT_IMAGES_FOLDER}:/storage ${DOCKER_IMAGE_NAME} --config ${FILE_NAME: default=config.list} --image_type ${SEGMENTATION_CLASS_COLORING_TYPE: default=voc}
+docker run -d --rm --runtime nvidia --shm-size 16G -v ${PATH_FOR_INPUT_IMAGES_FOLDER}:/storage waggle/plugin-trainig-fcn --config ${FILE_NAME: default=config.list} --image_type ${SEGMENTATION_CLASS_COLORING_TYPE: default=voc}
 ```
 
 The log of the training can be shown by,
@@ -114,7 +114,7 @@ The plugin requires a base fcn model with regard to what the user is tyring to i
 
 3) Preparing Images
 
-The plugin requires an image for inference, and it assumes that the image is stored in `data` folder under the folder where `config.list` is.
+The plugin requires an image for inference, and it assumes that the image is stored in `test/images` folder under the folder where `config.list` is.
 
 **All of the files and folders must be in one folder, and the folder needs to be mounted as `/storage`. The Docker image assumes that the config.list and the trained model are in under `/storage`** like below:
 
@@ -136,10 +136,10 @@ To inference, simply run the command below on the host machine. Please make sure
 
 
 ```
-docker run -d --rm --runtime nvidia -v ${ROOT_PATH_FOR_CONFIGURATION}:/storage ${DOCKER_IMAGE_NAME} --config ${FILE_NAME: default=config.list}
+docker run -d --rm --runtime nvidia -v ${ROOT_PATH_FOR_CONFIGURATION}:/storage waggle/plugin-trainig-fcn --config ${FILE_NAME: default=config.list}
 ```
 
-The result of the inference is an image, and the image is stored in `/storage/${OUTPUT_DIR}`.
+The result of the inference is an image, and the image is stored in `/storage/test/${OUTPUT_DIR}`.
 
 
 ### Adjustment required:
