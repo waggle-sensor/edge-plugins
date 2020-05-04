@@ -44,7 +44,7 @@ The plugin requires a pre-trained fcn model with regard to what the user is tyri
 - `pretrained_net` in configuration is a path to a prerained PyTorch model such as resnet101_from_caffe.pth
 
 
-**All of the files and folders must be in one folder, and the folder needs to be mounted as `/storage`**
+**All of the files and folders must be in one folder, and the folder needs to be mounted as `/data`**
 
 All of the files and folders must be in one folder. For example:
 ```
@@ -74,7 +74,7 @@ To train, simply run the command below on the host machine. Please make sure to 
 
 ```
 # skip --runtime nvidia if the host is not CUDA accelerated
-docker run -d --rm --runtime nvidia --shm-size 16G -v ${PATH_FOR_INPUT_IMAGES_FOLDER}:/storage waggle/plugin-trainig-fcn --config ${FILE_NAME: default=config.list} --image_type ${SEGMENTATION_CLASS_COLORING_TYPE: default=voc}
+docker run -d --rm --runtime nvidia --shm-size 16G -v ${PATH_FOR_INPUT_IMAGES_FOLDER}:/data waggle/plugin-trainig-fcn --config ${FILE_NAME: default=config.list} --image_type ${SEGMENTATION_CLASS_COLORING_TYPE: default=voc}
 ```
 
 The log of the training can be shown by,
@@ -83,7 +83,7 @@ The log of the training can be shown by,
 docker logs -f ${DOCKER_IMAGE_NAME}
 ```
 
-After the training is completed checkpoint models and logs can be found in `/storage/${MODEL_NAME}` on the host machine. The logs stored in csv file, and users can handle the data as they familiar with.
+After the training is completed checkpoint models and logs can be found in `/data/${MODEL_NAME}` on the host machine. The logs stored in csv file, and users can handle the data as they familiar with.
 
 
 
@@ -116,7 +116,7 @@ The plugin requires a base fcn model with regard to what the user is tyring to i
 
 The plugin requires an image for inference, and it assumes that the image is stored in `test/images` folder under the folder where `config.list` is.
 
-**All of the files and folders must be in one folder, and the folder needs to be mounted as `/storage`. The Docker image assumes that the config.list and the trained model are in under `/storage`** like below:
+**All of the files and folders must be in one folder, and the folder needs to be mounted as `/data`. The Docker image assumes that the config.list and the trained model are in under `/data`** like below:
 
 ```
 foler
@@ -136,10 +136,10 @@ To inference, simply run the command below on the host machine. Please make sure
 
 
 ```
-docker run -d --rm --runtime nvidia -v ${ROOT_PATH_FOR_CONFIGURATION}:/storage waggle/plugin-trainig-fcn --config ${FILE_NAME: default=config.list}
+docker run -d --rm --runtime nvidia -v ${ROOT_PATH_FOR_CONFIGURATION}:/data waggle/plugin-trainig-fcn --config ${FILE_NAME: default=config.list}
 ```
 
-The result of the inference is an image, and the image is stored in `/storage/test/${OUTPUT_DIR}`.
+The result of the inference is an image, and the image is stored in `/data/test/${OUTPUT_DIR}`.
 
 
 ### Adjustment required:
