@@ -18,6 +18,7 @@ name=cam_bottom_live
 $ docker run -d --rm \
   --device ${device} \
   --name ${name} \
+  -p 8090:8090 \          # the host gains access to the stream
   waggle/plugin-media-streaming:${version} \
   -f v4l2 \
   -input_format mjpeg \
@@ -36,5 +37,5 @@ $ ffmpeg -i http://${name}:8090/live live.mp4
 $ python3
 >> import cv2
 >> cap = cv2.VideoCapture('http://${name}:8090/live')
->> ret, image = cap.read()
+>> _, image = cap.read()
 ```
