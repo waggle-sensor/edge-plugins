@@ -5,4 +5,4 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 
 WORKDIR /app
 COPY coresense_4 ./
-CMD ["python3", "-u", "/app/plugin.py", "--input-sensor"]
+CMD ["python3", "/app/plugin.py", "--input-sensor"]
