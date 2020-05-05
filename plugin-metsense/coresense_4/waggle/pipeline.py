@@ -307,15 +307,17 @@ class Plugin(object):
     @classmethod
     def defaultConfig(cls):
         plugin = cls()
-        plugin.add_handler(RabbitMQHandler('amqp://rabbitmq'))
+        plugin.add_handler(RabbitMQHandler(
+            'amqp://legacy-plugin:legacy-plugin@rabbitmq'))
         return plugin
 
     @classmethod
     def fileTransferConfig(cls):
         plugin = cls()
-        plugin.add_handler(RabbitMQHandler('amqp://rabbitmq'))
+        plugin.add_handler(RabbitMQHandler(
+            'amqp://legacy-plugin:legacy-plugin@rabbitmq'))
         plugin.add_file_handler(RabbitMQHandler(
-            'amqp://rabbitmq', dest_queue='images'))
+            'amqp://legacy-plugin:legacy-plugin@rabbitmq', dest_queue='images'))
         return plugin
 
 
