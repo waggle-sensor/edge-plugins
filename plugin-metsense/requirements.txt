@@ -1,3 +1,4 @@
+numpy
 pika>=1.0.0
 pyserial
 pyyaml

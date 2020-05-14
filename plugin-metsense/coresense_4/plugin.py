@@ -58,6 +58,11 @@ def get_default_configuration():
     return sensor_table
 
 
+# class DebugHandler:
+
+#     def
+
+
 class DeviceHandler(object):
     def __init__(self, device):
         self.serial = None
