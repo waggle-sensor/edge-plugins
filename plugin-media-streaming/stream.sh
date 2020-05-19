@@ -85,10 +85,11 @@ sigint() {
   exit 0
 }
 
-trap sigint SIGINT
+trap sigint SIGINT SIGTERM
 
 clean_up
 spin_up
+sleep 10
 
 while :;
 do
@@ -109,8 +110,9 @@ do
   fi
 
   # do input feeder check
-  # TODO: This does not run, i.e. uses 0 % CPU.
-  #       Do not know why.
+  # NOTE: This does not run, i.e. uses 0 % CPU.
+  #       Do not know why. But, the code works when
+  #       called by a differen process.
   # timeout 30 ffmpeg \
   #   -loglevel panic \
   #   -i http://localhost:8090/live \
