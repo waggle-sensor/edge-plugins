@@ -141,6 +141,9 @@ docker run -d --rm --runtime nvidia -v ${ROOT_PATH_FOR_CONFIGURATION}:/data wagg
 
 The result of the inference is an image, and the image is stored in `/data/test/${OUTPUT_DIR}`.
 
+### Acknowledgement
+
+This repo is built upon [affromero](https://github.com/affromero/FCN)'s code and some snippets can be just a mirror.
 
 ### Adjustment required:
 
