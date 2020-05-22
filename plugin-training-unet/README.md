@@ -1,5 +1,5 @@
 ## Train Resnet-FCN network on PyTorch and Test the Model
-The plugin trains fcn models and tests the models: resnet101 based fcn101 and fcn50. To run the plugin, the user must have Docker engine (greater than 18.X.X) installed on the host. Nvidia CUDA driver (>= 10.1) on the host is preferrable for GPU acceleration.
+The plugin trains unet model and tests the models. To run the plugin, the user must have Docker engine (greater than 18.X.X) installed on the host. Nvidia CUDA driver (>= 10.1) on the host is preferrable for GPU acceleration.
 
 
 ### Train a Model
@@ -10,45 +10,41 @@ Image dataset including labeled images needs to be prepared on the host machine 
 
 - `train/images` is a folder containing all images
 - `train/labels` is a folder containing all labeled (ground truth) images
-- `class_names.list` is a file containing class names; one class name per line
-- `color_names.list` is a file containing RGB color value for each class; one class color set per line (R, G, B) **Will be supported**
 
-Recommended number of images is 1,000 per classes according to TensorFlow, but user can try with less number of images. The ground truth images (labeled images) must follow Pascal or [Cityscape](https://arxiv.org/pdf/1604.01685.pdf) lable in terms of coler of class. Data_loader for other class definition type is not ready (4/10/2020).
+Recommended number of images is 1,000 per classes according to TensorFlow, but user can try with less number of images. The ground truth images (labeled images) must be binary (0 or 255).
 
-2) Preparing Model Configuration
+2) Model Configuration
 
-- `config.list` (or other file name that user named) is a file containing configuration of the training as shown below; user can modify configuration for their use (The possible pair of backbone and fcn are: `{resnet, 101}, {resnet, 50}:
+User can change parameters that are listed below as input arguments:
 ```
-{
-    "max_iteration": 100000, 
-    "lr": 1e-10, 
-    "momentum": 0.99, 
-    "weight_decay": 0.0005, 
-    "interval_validate": 4000,
-    "batch_size": 1,
-    "backbone": "resnet",
-    "fcn": "101",
-    "output_dir": "resnet101",
-    "pretrained_net": "",
-    "n_workers": 6,
-    "mode": "train"
-}
+## For train
+'-e', '--epochs', metavar='E', type=int, default=5, help='Number of epochs', dest='epochs'
+'-b', '--batch-size', metavar='B', type=int, nargs='?', default=1, help='Batch size', dest='batch_size'
+'-l', '--learning-rate', metavar='LR', type=float, nargs='?', default=0.00001, help='Learning rate', dest='lr'
+'-w', '--weights', nargs='*', help='Class weights to use in loss calculation'
+'--n_channels', type=int, default=3, help='Number of channels in input images'
+'-f', '--load', dest='load', type=str, default=False, help='Load model from a .pth file'
+'-v', '--validation', dest='val', type=float, default=10.0, help='Percent of the data that is used as validation (0-100)'
+
+## for both train and inference
+'-d', '--mode', dest='mode', type=str, default='train', help='Mode to run the U-Net, train or infer'
+'-s', '--scale', dest='scale', type=float, default=0.5, help='Downscaling factor of the images'
+'--n_classes', type=int, default=1, help='Number of classes in the segmentation'
+
 ```
 
-`n_workers` in the configuration is how many workers will be used for read images to reduce time for reading images.
+Basically number of workers for loading images is 8. **`n_workers` in the configuration will be added.**
 
 3) Pretrained models
 
-The plugin requires a pre-trained fcn model with regard to what the user is tyring to train. If the host machine is connected to the internet, it will automatically download the pretrained model from PyTorch server. If users want to provide a pre-trained model, the path of the pretrained model can be listed in the configuration.
-
-- `pretrained_net` in configuration is a path to a prerained PyTorch model such as resnet101_from_caffe.pth
+The plugin can load a pre-trained model.  If users want to provide a pre-trained model, the path of the pretrained model can be provided through `-f` or `--load` argument for training, and `-m` or `--model` argument for inference.
 
 
 **All of the files and folders must be in one folder, and the folder needs to be mounted as `/data`**
 
 All of the files and folders must be in one folder. For example:
 ```
-foler
+input foler
  ├─ train
  │     ├─ images
  │     │     ├─ image1
@@ -58,14 +54,20 @@ foler
  │           ├─ image1
  │           ├─ image2
  │           └─ ...
- ├─ class_names.list
- ├─ config.list
- ├─ pretrained_model (optional, such as model_best.pth.tar)
- └─ class_colors.list (not supported yet)
-```
-
-
-
+ └─ pretrained_model (optional, such as model_best.pth) ## not yet tested
+ 
+ 
+output folder
+ ├─ runs
+ │     ├─ tensorboard log1
+ │     ├─ tensorboard log2
+ │     └─ ...
+ │     └─ labels
+ └─ checkpoints
+       ├─ checkpoint1
+       ├─ checkpoint2
+       └─ ...
+ ```
 
 4) Training
 
@@ -74,7 +76,7 @@ To train, simply run the command below on the host machine. Please make sure to 
 
 ```
 # skip --runtime nvidia if the host is not CUDA accelerated
-docker run -d --rm --runtime nvidia --shm-size 16G -v ${ROOT_PATH_FOR_CONFIGURATION}:/data waggle/plugin-trainig-fcn --config ${FILE_NAME: default=config.list} --image_type ${SEGMENTATION_CLASS_COLORING_TYPE: default=voc}
+docker run -d --rm --runtime nvidia --shm-size 16G -v ${PATH_TO_IMAGES}:/data -v ${PATH_TO_CHECKPOINT}:/train/checkpoints -v ${PATH_TO_LOGS}:/train/runs classicblue/plugin-trainig-unet -d train -e 5 -l 0.00006 -b 4 -s 1.0
 ```
 
 The log of the training can be shown by,
@@ -83,52 +85,63 @@ The log of the training can be shown by,
 docker logs -f ${DOCKER_IMAGE_NAME}
 ```
 
-After the training is completed checkpoint models and logs can be found in `/data/${MODEL_NAME}` on the host machine. The logs stored in csv file, and users can handle the data as they familiar with.
+After the training is completed checkpoint models and logs can be found in `${PATH_TO_CHECKPOINT}` on the host machine. The logs stored in `${PATH_TO_LOGS}` as tensorboard and csv file, and users can handle the data as they familiar with.
 
 
 
 ### Test the Model
 
 
-1) Preparing Inference Configuration
+1) Inference Configuration
 
-- `config.list` (or other file name that user named) is a file containing configuration of the inference as shown below; user can modify configuration for their use (The possible pair of backbone and fcn are: `{resnet, 101}, {resnet, 50}:
+User can change parameters that are listed below as input arguments:
 ```
-{
-    "backbone": "resnet",
-    "fcn": "101",
-    "output_dir": "output",
-    "model": "resnet_fcn101.pth.tar",
-    "mode": "test"
-}
+## for both train and inference
+'-d', '--mode', dest='mode', type=str, default='train', help='Mode to run the U-Net, train or infer'
+'-s', '--scale', dest='scale', type=float, default=0.5, help='Downscaling factor of the images'
+'--n_classes', type=int, default=1, help='Number of classes in the segmentation'
+
+## for inference
+'-m', '--model', metavar='FILE', help='Specify the file in which the model is stored'
+'-i', '--input', metavar='INPUT', default='/data/test/', help='Folder to read input images'
+'-o', '--output', metavar='OUTPUT', default='/train/output/', help='Folder to save ouput images'
+'-n', '--no-save', action='store_true', default=False, help='Do not save the output masks'
+'-t', '--mask-threshold', type=float, default=0.5, help='Minimum probability value to consider a mask pixel white')
 ```
 
 
 2) Trained model
 
-The plugin requires a base fcn model with regard to what the user is tyring to inference. The host machine will automatically download the model from PyTorch server. Based on the fcn net, the inference script adds weight from the model that user adds on configuration file, `config.list`. It assumes that the model is stored in the folder where `config.list` is.
-
-- `model` in the configuration is a path to a prerained PyTorch model.
-
+The plugin can load a pre-trained model.  If users want to provide a pre-trained model, the path of the pretrained model can be provided through `-f` or `--load` argument for training, and `-m` or `--model` argument for inference.
 
 
 3) Preparing Images
 
-The plugin requires an image for inference, and it assumes that the image is stored in `test/images` folder under the folder where `config.list` is.
+The plugin requires a folder that containes images for inference, and it assumes that the image is stored in `test/images`.
 
 **All of the files and folders must be in one folder, and the folder needs to be mounted as `/data`. The Docker image assumes that the config.list and the trained model are in under `/data`** like below:
 
 ```
-foler
- ├─ test
- │     └─ images
- │           ├─ image1
- │           ├─ image2
- │           └─ ...      
- ├─ class_names.list
- └─ config.list
+input foler
+ └─ test
+       └─ images
+             ├─ image1
+             ├─ image2
+             └─ ...
+             
+ 
+output folder
+ └─ checkpoints
+         ├─ checkpoint1
+         ├─ checkpoint2
+         └─ ...
+ 
+ output image folder
+   └─ output images
+         ├─ output1
+         ├─ output2
+         └─ ...
 ```
-
 
 4) Inference
 
@@ -136,16 +149,12 @@ To inference, simply run the command below on the host machine. Please make sure
 
 
 ```
-docker run -d --rm --runtime nvidia -v ${ROOT_PATH_FOR_CONFIGURATION}:/data waggle/plugin-trainig-fcn --config ${FILE_NAME: default=config.list}
+docker run -d --rm --runtime nvidia --shm-size 16G -v ${PATH_TO_IMAGES}:/data -v ${PATH_TO_CHECKPOINT}:/train/checkpoints -v ${PATH_TO_OUTPUT_IMAGES}:/train/output classicblue/plugin-trainig-unet -d test -s 1.0
 ```
 
-The result of the inference is an image, and the image is stored in `/data/test/${OUTPUT_DIR}`.
+The result of the inference is an image, and the image is stored in `${OUTPUT_DIR}`.
 
 ### Acknowledgement
 
-This repo is built upon [affromero](https://github.com/affromero/FCN)'s code and some snippets can be just a mirror.
-
-### Adjustment required:
-
-- Adapt color set that is not Pascal or Cityscape.
+This repo is built upon [tim-vdl](https://github.com/tim-vdl/Pytorch-UNet)'s code and some snippets can be just a mirror.
 
