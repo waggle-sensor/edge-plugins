@@ -14,14 +14,14 @@ NOTE: The Waggle Docker images listed below are based on their version of `0.1.0
 
 | Image name | base | software | ML tools | etc |
 |---|---|---|---|---|
-| waggle-base | Ubuntu18.04 | Python3.6,Numpy1.17.4,git,nano | N/A |   |
-| waggle-base-light | Alpine 3.10.2 | Python3.7,Numpy1.16,git,nano | N/A |   |
-| waggle-base-gpu | Ubuntu18.04 | Python3.6,Numpy1.17.4,git,nano | CUDA 10.1,Mali T-62x  |   |
-| waggle-opencv | waggle-base-gpu | codecs,image libraries  | OpenCV 4.1.1 |   |
-| waggle-tensorflow | waggle-base-gpu | hdf5,atlas | TensorFlow 1.4 / 2.1.0  |   |
-| waggle-torch | waggle-base-gpu |   | PyTorch 1.4.0,Torchvision 0.5.0  |   |
-| waggle-training-fcn | waggle-torch |   | FCN models  |   |
-| waggle-training-yolov3 | waggle-torch |   | YoloV3 model  |   |
+| [waggle-base](https://hub.docker.com/r/waggle/plugin-base) | Ubuntu18.04 | Python3.6,Numpy1.17.4,git,nano | N/A |   |
+| [waggle-base-light](https://hub.docker.com/r/waggle/plugin-base-light) | Alpine 3.10.2 | Python3.7,Numpy1.16,git,nano | N/A |   |
+| [waggle-base-gpu](https://hub.docker.com/r/waggle/plugin-base-gpu) | Ubuntu18.04 | Python3.6,Numpy1.17.4,git,nano | CUDA 10.1(for arm64)/10.2(for x86_64),Mali T-62x  |   |
+| [waggle-opencv](https://hub.docker.com/r/waggle/plugin-opencv) | waggle-base-gpu | codecs,image libraries  | OpenCV 4.1.1 |   |
+| [waggle-tensorflow](https://hub.docker.com/r/waggle/plugin-tensorflow) | waggle-base-gpu | hdf5,atlas | TensorFlow 1.4 / 2.1.0  |   |
+| [waggle-torch](https://hub.docker.com/r/waggle/plugin-torch) | waggle-base-gpu | N/A  | PyTorch 1.4.0,Torchvision 0.5.0  |   |
+| [waggle-training-fcn](https://hub.docker.com/r/waggle/plugin-training-fcn) | waggle-torch | N/A  | FCN models  |   |
+| [waggle-training-yolov3](https://hub.docker.com/r/waggle/plugin-training-yolov3) | waggle-torch | Pillow | YoloV3 model,tensorboardx  |   |
 
 #### Supported Hardware
 
@@ -31,17 +31,17 @@ The current set of Waggle Docker images support any x86_64 based system, any arm
 
 Base images simply provides the base for plugins to be running. There are 3 types of base imabes,
 
-1) `plugin-base`: Ubuntu 18.04 based image; suitable for any edge plugin that do not require GPU acceleration
-2) `plugin-base-light`: Alpine 3.10.X based image; suitable for edge plugins that do not require heavy computation
-3) `plugin-base-gpu`: Ubuntu 18.04 based image with GPU libraries; suitable for edge plugins that need GPU acceleration
+1) `waggle-base`: Ubuntu 18.04 based image; suitable for any edge plugin that do not require GPU acceleration
+2) `waggle-base-light`: Alpine 3.10.X based image; suitable for edge plugins that do not require heavy computation
+3) `waggle-base-gpu`: Ubuntu 18.04 based image with GPU libraries; suitable for edge plugins that need GPU acceleration
 
 #### Waggle Images for Machine Learning
 
 Common machine learning tools such as TensorFlow, OpenCV, PyTorch are supported by Waggle images. The ML Waggle images are based on `plugin-base-gpu` for GPU acceleration on the ML tools.
 
-1) `plugin-opencv`: OpenCV 4.1.1 with contribution packages are supported
-2) `plugin-tensorflow`: TensorFlow 1.4.0 and 2.0.0 (in progress) are supported
-3) `plugin-torch`: Torch 1.4.0 and Torchvision 0.5.0 (Pillow 6.2.1) are supported
+1) `waggle-opencv`: OpenCV 4.1.1 with contribution packages are supported
+2) `waggle-tensorflow`: TensorFlow 1.4.0 and 2.0.0 (in progress) are supported
+3) `waggle-torch`: Torch 1.4.0 and Torchvision 0.5.0 (Pillow 6.2.1) are supported
 
 #### Waggle Images for Cloud Training
 
@@ -49,5 +49,5 @@ A few Waggle images support cloud training capability.
 
 __NOTE: This is primarily under development__
 
-1) `plugin-training-fcn`: Image segmentation using fully connected network (FCN) with Resnet and VGG16 base networks
-2) `plugin-training-yolov3`: Object detection using Yolov3 network
+1) `waggle-training-fcn`: Image segmentation using fully connected network (FCN) with Resnet and VGG16 base networks
+2) `waggle-training-yolov3`: Object detection using Yolov3 network
