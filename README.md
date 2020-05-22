@@ -27,4 +27,4 @@ Please refer to [building simple edge plugin](plugin-simple/README.md)
 
 #### Which Waggle image I choose for my application
 
-Users are provided a set of Waggle Docker images to build user applications. The Waggle Docker images support a variety of software libraries and machine learning (ML) tools. Many of ML Waggle Docker images come with a specific version of CUDA library installed inside the image. To know further about our Waggle Docker images, please find [Pluing hierarchy](docs/plugin_base_hierarchy.md).
+Users are provided a set of Waggle Docker images to build user applications. The Waggle Docker images support a variety of software libraries and machine learning (ML) tools. Many of ML Waggle Docker images come with a specific version of CUDA library installed inside the image. To know further about our Waggle Docker images, please find [Waggle base images](docs/waggle_base_images.md).
