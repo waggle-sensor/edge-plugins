@@ -14,15 +14,14 @@ NOTE: The Waggle Docker images listed below are based on their version of `0.1.0
 
 | Image name | base | software | ML tools | etc |
 |---|---|---|---|---|
-| waggle-base | Ubuntu18.04  | Python3.6,Numpy1.17.4,git,nano  | N/A  |   |
-| waggle-base-light | Alpine 3.10.2 | Python3.7,Numpy1.16,git,nano  | N/A  |   |
-| waggle-base-gpu | Ubuntu18.04  |   |   |   |
-| waggle-base-gpu | Ubuntu18.04  |   |   |   |
-| waggle-opencv | waggle-base-gpu  |   |   |   |
-| waggle-tensorflow | waggle-base-gpu  |   |   |   |
-| waggle-torch | waggle-base-gpu  |   |   |   |
-| waggle-training-fcn | waggle-torch  |   |   |   |
-| waggle-training-yolov3 | waggle-torch  |   |   |   |
+| waggle-base | Ubuntu18.04 | Python3.6,Numpy1.17.4,git,nano | N/A |   |
+| waggle-base-light | Alpine 3.10.2 | Python3.7,Numpy1.16,git,nano | N/A |   |
+| waggle-base-gpu | Ubuntu18.04 | Python3.6,Numpy1.17.4,git,nano | CUDA 10.1,Mali T-62x  |   |
+| waggle-opencv | waggle-base-gpu | codecs,image libraries  | OpenCV 4.1.1 |   |
+| waggle-tensorflow | waggle-base-gpu | hdf5,atlas | TensorFlow 1.4 / 2.1.0  |   |
+| waggle-torch | waggle-base-gpu |   | PyTorch 1.4.0,Torchvision 0.5.0  |   |
+| waggle-training-fcn | waggle-torch |   | FCN models  |   |
+| waggle-training-yolov3 | waggle-torch |   | YoloV3 model  |   |
 
 #### Supported Hardware
 
