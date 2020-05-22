@@ -25,6 +25,6 @@ bye
 
 Please refer to [building simple edge plugin](plugin-simple/README.md)
 
-#### Waggle Base Images
+#### Which Waggle image I choose for my application
 
-Waggle users are able to build edge plugins that are based on Waggle base images. [Pluing hierarchy](docs/plugin_base_hierarchy.md) describes what plugin base image users need to choose depending on their needs.
+Users are provided a set of Waggle Docker images to build user applications. The Waggle Docker images support a variety of software libraries and machine learning (ML) tools. Many of ML Waggle Docker images come with a specific version of CUDA library installed inside the image. To know further about our Waggle Docker images, please find [Pluing hierarchy](docs/plugin_base_hierarchy.md).
