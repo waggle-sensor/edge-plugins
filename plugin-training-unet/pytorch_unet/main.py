@@ -39,7 +39,7 @@ def get_args():
     parser.add_argument('-i', '--input', metavar='INPUT', default='/data/test/',
                         help='Folder to read input images')
 
-    parser.add_argument('-o', '--output', metavar='OUTPUT', default='/data/output/',
+    parser.add_argument('-o', '--output', metavar='OUTPUT', default='./output/',
                         help='Folder to save ouput images')
     parser.add_argument('-n', '--no-save', action='store_true', default=False,
                         help='Do not save the output masks')
