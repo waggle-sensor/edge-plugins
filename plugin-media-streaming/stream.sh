@@ -1,10 +1,25 @@
 #!/bin/bash
 
+help() {
+  echo " Start ffserver and ffmpeg for feedding input to the server"
+  echo " USAGE: stream.sh [OPTIONS] [FFMPEG PARAMS]"
+  echo "    [OPTIONS]"
+  echo "    -h            print usage"
+  echo "    -verbose      print logs"
+  echo "    -input_format input format of the source"
+  echo "                  examples; mjpeg, mp4, mp3"
+  echo "    -video_size   video size of the input"
+}
+
 unparsed_parameters=()
 while [[ $# -gt 0 ]]
 do
   key="$1"
   case $key in
+    -h)
+    help
+    exit 0
+    ;;
     -input_format)
     input_format="$2"
     shift
@@ -15,13 +30,17 @@ do
     shift
     shift
     ;;
+    -v)
+    verbose="true"
+    shift
+    ;;
     *)
     unparsed_parameters+=("$1")
     shift
     ;;
   esac
 done
-set -- "${unparsed_parameters[@]}"
+#set -- "${unparsed_parameters[@]}"
 
 cp _ffserver.conf /etc/ffserver.conf
 
@@ -57,35 +76,52 @@ mkdir -p /var/run/waggle
 server_pid=/var/run/waggle/ffserver.pid
 input_pid=/var/run/waggle/ffmpeg.pid
 
+print() {
+  loglevel=$1
+  message=$2
+  echo "$(date) $loglevel $message"
+}
+
 clean_up() {
   if [ -e ${server_pid} ] ; then
     if ps -p $(cat ${server_pid}) > /dev/null 2>&1 ; then
+      if [ ! -z $verbose ]; then
+        print "INFO" "Attemping to kill ffserver..."
+      fi
       kill -9 $(cat ${server_pid})
     fi
   fi
   if [ -e ${input_pid} ] ; then
     if ps -p $(cat ${input_pid}) > /dev/null 2>&1 ; then
+      if [ ! -z $verbose ]; then
+        print "INFO" "Attemping to kill the input feeder..."
+      fi
       kill -9 $(cat ${input_pid})
     fi
   fi
 }
 
 spin_up() {
+  if [ ! -z $verbose ]; then
+    print "INFO" "Spinning up ffserver and input feeder..."
+  fi
   ffserver &
   echo $! > ${server_pid}
   sleep 1
-  ffmpeg -loglevel panic $@ http://localhost:8090/feed1.ffm &
+  ffmpeg -loglevel panic ${unparsed_parameters[@]} http://localhost:8090/feed1.ffm &
   echo $! > ${input_pid}
   sleep 5
 }
 
 sigint() {
-  echo "interrupted!"
+  print "INFO" "Process interruppted! Halting..."
   clean_up
   exit 0
 }
 
 trap sigint SIGINT SIGTERM
+
+print "INFO" "Starting..."
 
 clean_up
 spin_up
@@ -104,39 +140,46 @@ do
   if [[ ${return_code} =~ ^[2]{1} ]]; then
     :
   else
+    if [ ! -z $verbose ]; then
+      print "ERROR" "ffserver not responding!"
+    fi
     clean_up
-    spin_up $@
+    spin_up
     continue
   fi
 
   # do input feeder check
-  # NOTE: This does not run, i.e. uses 0 % CPU.
-  #       Do not know why. But, the code works when
-  #       called by a differen process.
-  # timeout 30 ffmpeg \
-  #   -loglevel panic \
-  #   -i http://localhost:8090/live \
-  #   -frames 1 \
-  #   -vcodec copy \
-  #   -acodec copy \
-  #   -f null /dev/null 2>&1
-  # if [ $? -eq 0 ]; then
-  #   :
-  # else
-  #   clean_up
-  #   spin_up $@
-  # fi
-  # or simply check it from stat.html
-  receive_data=$(curl \
-    --silent \
-    http://localhost:8090/stat.html | \
-    grep RECEIVE_DATA
-  )
-  if [[ "${receive_data}x" == "x" ]]; then
-    clean_up
-    spin_up $@
-  else
+  # NOTE: This only works
+  #       when processed in background.
+  timeout 30 ffmpeg \
+    -loglevel panic \
+    -i http://localhost:8090/live \
+    -frames 1 \
+    -vcodec copy \
+    -acodec copy \
+    -f null /dev/null &
+  if [ $? -eq 0 ]; then
     :
+  else
+    if [ ! -z $verbose ]; then
+      print "ERROR" "input feeder not responding!"
+    fi
+    clean_up
+    spin_up
   fi
+  # WARNING: The method below is NOT appropriate
+  #          to check status of the input feeder
+  # or simply check it from stat.html
+  # receive_data=$(curl \
+  #   --silent \
+  #   http://localhost:8090/stat.html | \
+  #   grep RECEIVE_DATA
+  # )
+  # if [[ "${receive_data}x" == "x" ]]; then
+  #   clean_up
+  #   spin_up
+  # else
+  #   :
+  # fi
   sleep 60
 done
