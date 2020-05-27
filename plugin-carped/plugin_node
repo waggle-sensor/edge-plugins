@@ -116,6 +116,16 @@ config = {
 print(f'opening input {args.input}')
 capture = open_video_capture(args.input)
 
+
+# bind read_image function to capture
+def read_image():
+    while True:
+        _, img = capture.read()
+        if img is not None:
+            return img
+        time.sleep(0.1)
+
+
 print(f'loading model and model config')
 cvNet = read_model_file(config['model'], config['model_desc'])
 classes = read_classes_file(config['classes'])
@@ -124,15 +134,6 @@ swapRB = 'RGB' in config['input_channel_order'].upper()
 
 if not args.debug:
     plugin = waggle.plugin.Plugin()
-
-
-def read_image():
-    while True:
-        _, img = capture.read()
-        if img is not None:
-            return img
-        time.sleep(0.1)
-
 
 while True:
     healthcheck_file.touch()
