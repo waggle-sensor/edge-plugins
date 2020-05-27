@@ -13,6 +13,17 @@ Image dataset including labeled images needs to be prepared on the host machine 
 
 Recommended number of images is 1,000 per classes according to TensorFlow, but user can try with less number of images. The ground truth images (labeled images) must be binary (0 or 255).
 
+**Waggle team provides an example dataset for cloud segmentation for users of this plugin.**
+
+Any person using the Data, shall not distribute, share, publish or release the Data to any person. The Data will only be used in research and the user may not make copies of the data for use outside of its research responsibilities.
+
+Users can download the images through below:
+```
+from torchvision.datasets.utils import download_and_extract_archive
+url = 'https://web.lcrc.anl.gov/public/waggle/datasets/WaggleClouds.tar.gz'
+download_and_extract_archive(url, 'download', 'data')
+```
+
 2) Model Configuration
 
 User can change parameters that are listed below as input arguments:
