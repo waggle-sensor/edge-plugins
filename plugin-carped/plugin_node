@@ -13,6 +13,10 @@ import cv2
 import numpy as np
 import sys
 import waggle.plugin
+from pathlib import Path
+
+
+healthcheck_file = Path('/run/healthcheck')
 
 
 def read_model_file(path, desc):
@@ -122,6 +126,9 @@ if not args.debug:
     plugin = waggle.plugin.Plugin()
 
 while True:
+    # healthcheck_file will be checked and removed by docker HEALTHCHECK
+    healthcheck_file.touch()
+
     _, img = capture.read()
 
     if img is None:
