@@ -10,9 +10,6 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 
 COPY plugin_node ./
 
-HEALTHCHECK --interval=30s --timeout=30s \
-  CMD rm /run/healthcheck || exit 1
-
 ENV WAGGLE_PLUGIN_ID="50" \
   WAGGLE_PLUGIN_VERSION="1.0.0" \
   WAGGLE_PLUGIN_NAME="Car / Person Counter"

@@ -9,14 +9,26 @@ import argparse
 import os
 import time
 import json
-import cv2
 import numpy as np
 import sys
 import waggle.plugin
-from pathlib import Path
+import multiprocessing
+import cv2
 
 
-healthcheck_file = Path('/run/healthcheck')
+config = {
+    'source': 'bottom',
+    'model': 'models/ssd_mobilenet_coco.pb',
+    'model_desc': 'models/ssd_mobilenet_coco.pbtxt',
+    'classes': 'models/ssd_mobilenet_coco.classes',
+    'input_scale': 0.00784,
+    'input_size': (300, 300),
+    'input_mean_subtraction': (127.5, 127.5, 127.5),
+    'input_channel_order': 'RGB',
+    'detection_interval': 300,  # every 5 mins
+    'sampling_interval': -1,  # None, by default
+    'detection_confidence': 0.3,  # least detection confidence
+}
 
 
 def read_model_file(path, desc):
@@ -94,91 +106,94 @@ def open_video_capture(input):
     return capture
 
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--debug', action='store_true')
-parser.add_argument('--input', default='http://cam_bottom_live:8090/live')
-args = parser.parse_args()
+def worker_main(args, heartbeat):
+    print(f'opening input {args.input}')
+    capture = open_video_capture(args.input)
 
-config = {
-    'source': 'bottom',
-    'model': 'models/ssd_mobilenet_coco.pb',
-    'model_desc': 'models/ssd_mobilenet_coco.pbtxt',
-    'classes': 'models/ssd_mobilenet_coco.classes',
-    'input_scale': 0.00784,
-    'input_size': (300, 300),
-    'input_mean_subtraction': (127.5, 127.5, 127.5),
-    'input_channel_order': 'RGB',
-    'detection_interval': 300,  # every 5 mins
-    'sampling_interval': -1,  # None, by default
-    'detection_confidence': 0.3,  # least detection confidence
-}
+    # bind read_image function to capture
+    def read_image():
+        while True:
+            _, img = capture.read()
+            if img is not None:
+                return img
+            time.sleep(0.1)
 
-print(f'opening input {args.input}')
-capture = open_video_capture(args.input)
+    print(f'loading model and model config')
+    cvNet = read_model_file(config['model'], config['model_desc'])
+    classes = read_classes_file(config['classes'])
+    confidence = float(config.get('detection_confidence', 0.3))
+    swapRB = 'RGB' in config['input_channel_order'].upper()
 
+    if args.debug is not True:
+        plugin = waggle.plugin.Plugin()
 
-# bind read_image function to capture
-def read_image():
     while True:
-        _, img = capture.read()
-        if img is not None:
-            return img
-        time.sleep(0.1)
+        heartbeat.put(1)
+
+        print('reading image...', flush=True)
+        img = read_image()
+        print('read image', flush=True)
+
+        img_blob = cv2.dnn.blobFromImage(
+            img,
+            config['input_scale'],
+            config['input_size'],
+            config['input_mean_subtraction'],
+            swapRB=swapRB,
+            crop=False
+        )
+
+        detected_objects = detect_objects(
+            img_blob,
+            cvNet,
+            classes,
+            confidence=confidence,
+            img_rows=img.shape[0],
+            img_cols=img.shape[1]
+        )
+
+        cars = detected_objects.get('car', {})
+        people = detected_objects.get('person', {})
+
+        count_car = len(cars)
+        count_person = len(people)
+
+        print(f'cars={count_car} pedestrians={count_person}')
+
+        if args.debug is not True:
+            plugin.add_measurement({
+                'sensor_id': 0x3001,
+                'parameter_id': 1,
+                'value': count_car,
+            })
+
+            plugin.add_measurement({
+                'sensor_id': 0x3001,
+                'parameter_id': 2,
+                'value': count_person,
+            })
+
+            plugin.publish_measurements()
 
 
-print(f'loading model and model config')
-cvNet = read_model_file(config['model'], config['model_desc'])
-classes = read_classes_file(config['classes'])
-confidence = float(config.get('detection_confidence', 0.3))
-swapRB = 'RGB' in config['input_channel_order'].upper()
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--input', default='http://cam_bottom_live:8090/live')
+    parser.add_argument('--debug', action='store_true')
+    args = parser.parse_args()
 
-if not args.debug:
-    plugin = waggle.plugin.Plugin()
+    heartbeat = multiprocessing.Queue()
+    worker = multiprocessing.Process(
+        target=worker_main, args=(args, heartbeat))
 
-while True:
-    healthcheck_file.touch()
+    try:
+        worker.start()
+        while True:
+            heartbeat.get(timeout=30)
+    except Exception:
+        worker.terminate()
+        raise RuntimeError('worker is no longer responding')
 
-    print('reading image...', flush=True)
-    img = read_image()
-    print('read image', flush=True)
 
-    img_blob = cv2.dnn.blobFromImage(
-        img,
-        config['input_scale'],
-        config['input_size'],
-        config['input_mean_subtraction'],
-        swapRB=swapRB,
-        crop=False
-    )
-
-    detected_objects = detect_objects(
-        img_blob,
-        cvNet,
-        classes,
-        confidence=confidence,
-        img_rows=img.shape[0],
-        img_cols=img.shape[1]
-    )
-
-    cars = detected_objects.get('car', {})
-    people = detected_objects.get('person', {})
-
-    count_car = len(cars)
-    count_person = len(people)
-
-    print(f'cars={count_car} pedestrians={count_person}')
-
-    if not args.debug:
-        plugin.add_measurement({
-            'sensor_id': 0x3001,
-            'parameter_id': 1,
-            'value': count_car,
-        })
-
-        plugin.add_measurement({
-            'sensor_id': 0x3001,
-            'parameter_id': 2,
-            'value': count_person,
-        })
-
-        plugin.publish_measurements()
+if __name__ == '__main__':
+    main()
