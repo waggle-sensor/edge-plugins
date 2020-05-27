@@ -125,14 +125,21 @@ swapRB = 'RGB' in config['input_channel_order'].upper()
 if not args.debug:
     plugin = waggle.plugin.Plugin()
 
-while True:
-    _, img = capture.read()
 
-    if img is None:
+def read_image():
+    while True:
+        _, img = capture.read()
+        if img is not None:
+            return img
         time.sleep(0.1)
-        continue
 
-    print('received image', flush=True)
+
+while True:
+    healthcheck_file.touch()
+
+    print('reading image...', flush=True)
+    img = read_image()
+    print('read image', flush=True)
 
     img_blob = cv2.dnn.blobFromImage(
         img,
@@ -174,6 +181,3 @@ while True:
         })
 
         plugin.publish_measurements()
-
-    # healthcheck_file will be checked and removed by docker HEALTHCHECK
-    healthcheck_file.touch()
