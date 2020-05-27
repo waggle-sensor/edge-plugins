@@ -126,9 +126,6 @@ if not args.debug:
     plugin = waggle.plugin.Plugin()
 
 while True:
-    # healthcheck_file will be checked and removed by docker HEALTHCHECK
-    healthcheck_file.touch()
-
     _, img = capture.read()
 
     if img is None:
@@ -177,3 +174,6 @@ while True:
         })
 
         plugin.publish_measurements()
+
+    # healthcheck_file will be checked and removed by docker HEALTHCHECK
+    healthcheck_file.touch()
