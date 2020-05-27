@@ -9,7 +9,7 @@ from io import BytesIO
 class FireImage:
     oneFire = False
     newsize = (128,128)
-    classes = ["No Fire", "FIRE"]
+    classes = ["No Fire", "Fire"]
     def __init__(self):
         self.image = None
     
