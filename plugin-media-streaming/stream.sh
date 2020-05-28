@@ -157,15 +157,41 @@ do
     -frames 1 \
     -vcodec copy \
     -acodec copy \
-    -f null /dev/null &
-  if [ $? -eq 0 ]; then
-    :
-  else
+    -f null /tmp/feeder_test &
+  tester_pid=$!
+  # wait 5 seconds for the tester spawned
+  for i in {05..00}
+  do
+    if ps -p $tester_pid > /dev/null 2>&1 ; then
+      break
+    else
+      sleep 1
+    fi
+  done
+  if [ $i -eq 0 ]; then
+    print "ERROR" "Could not run testing! Halting..."
+    clean_up
+    exit 1
+  fi
+
+  # wait 30 seconds for the tester done checking
+  for i in {30..00}
+  do
+    if ps -p $tester_pid > /dev/null 2>&1 ; then
+      sleep 1
+    else
+      break
+    fi
+  done
+  if [ $i -eq 0 ]; then
+    kill -9 $tester_pid
     if [ ! -z $verbose ]; then
-      print "ERROR" "input feeder not responding!"
+      print "ERROR" "Input feeder not responding!"
     fi
     clean_up
     spin_up
+  else
+    :
   fi
   # WARNING: The method below is NOT appropriate
   #          to check status of the input feeder
