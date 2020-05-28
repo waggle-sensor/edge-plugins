@@ -13,7 +13,7 @@ from serial import Serial, SerialException
 
 from waggle.pipeline import Plugin
 from waggle.checksum import crc8
-from waggle.protocol.v5.decoder import decode_frame, convert
+# from waggle.protocol.v5.decoder import decode_frame, convert
 
 import json
 
@@ -56,6 +56,11 @@ def get_default_configuration():
         }
         sensor_table.update(sensor_to_be_added)
     return sensor_table
+
+
+# class DebugHandler:
+
+#     def
 
 
 class DeviceHandler(object):
@@ -236,6 +241,7 @@ class CoresensePlugin4(Plugin):
         return requests
 
     def _decode(self, packets):
+        from waggle.protocol.v5.decoder import decode_frame
         decoded = decode_frame(packets)
         if decoded != {}:
             return decoded
@@ -243,15 +249,17 @@ class CoresensePlugin4(Plugin):
             return None
 
     def _print(self, decoded_dict):
+        from waggle.protocol.v5.decoder import convert
         for item in decoded_dict:
             try:
                 converted_value = convert(decoded_dict[item], item)
-                print(converted_value)
+                print(converted_value, flush=True)
             except Exception as ex:
-                print('Coult not decode %s: %s' % (item, str(ex)))
+                print('Coult not decode %s: %s' % (item, str(ex)), flush=True)
 
     def run(self):
         # Check firmware version and MAC address of the Metsense
+        print('Checking firmware version...', flush=True)
         try:
             check_firmware_request = [5, 255, 5, 0]  # sensor_read, 0xFF, 0x00
             message = self.input_handler.request_data(check_firmware_request)
@@ -265,32 +273,34 @@ class CoresensePlugin4(Plugin):
                 if not self.hrf:
                     self.send(sensor='frame', data=message)
         except SerialException:
-            print('Could not check firmware version due to serial error. Restarting...')
+            print(
+                'Could not check firmware version due to serial error. Restarting...', flush=True)
             return
         except Exception as ex:
-            print('Could not check firmware version %s ' % (str(ex),))
+            print('Could not check firmware version %s ' %
+                  (str(ex),), flush=True)
             return
 
         while True:
+            print('Waiting for frame...', flush=True)
             requests = self._get_requests()
             if len(requests) > 0:
                 try:
                     message = self.input_handler.request_data(requests)
                 except SerialException:
-                    print('Error in serial connection. Restarting...')
+                    print('Error in serial connection. Restarting...', flush=True)
                     break
 
                 if message is None:
-                    print('Errors or invalid crc')
+                    print('Errors or invalid crc', flush=True)
                     time.sleep(5)
                 elif len(message) == 0:
-                    print('No packet received. Restarting...')
+                    print('No packet received. Restarting...', flush=True)
                     break
                 else:
-                    print('Received frame')
+                    print('Received frame', flush=True)
                     if self.hrf:
-                        decoded_message = self._decode(message)
-                        self._print(decoded_message)
+                        self._print(self._decode(message))
                     else:
                         self.send(sensor='frame', data=message)
             else:

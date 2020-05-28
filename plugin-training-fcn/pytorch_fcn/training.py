@@ -1,6 +1,5 @@
 import os
 import os.path as osp
-import yaml
 
 import torch
 import numpy as np
@@ -24,7 +23,7 @@ def get_log_dir(model_name, config_id, cfg, root):
     if not osp.exists(log_dir):
         os.makedirs(log_dir)
     with open(osp.join(log_dir, 'config.list'), 'w') as f:
-        yaml.safe_dump(cfg, f, default_flow_style=False)
+        f.write(json.dumps(cfg, indent=4, sort_keys=True))
     return log_dir
 
 
@@ -33,6 +32,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--config', type=str, default='config.list', help='path to train configuration list')
+    parser.add_argument('--image_type', type=str, default='voc', help='segmentation class coloring type')
     args = parser.parse_args()
 
     ## root folder for the images and label images
@@ -47,6 +47,10 @@ if __name__ == "__main__":
     opts.cfg = configurations
 
 
+    if opts.cfg['backbone'] != 'resnet':
+        raise Exception('Not supported')
+
+
     ## read file that contains class names
     class_names = []
     with open('/storage/class_names.list', 'r') as f:
@@ -54,49 +58,33 @@ if __name__ == "__main__":
             class_names.append(line.strip())
 
     class_names = np.array(class_names)
-    print(class_names)
 
     cuda = torch.cuda.is_available()
-    print(cuda)
+    #print(cuda)
 
     opts.cfg['cuda'] = 'cuda' if cuda else 'cpu'
     opts.cfg['mode'] = 'train'
     opts.cfg['n_classes'] = len(class_names)
-
-    opts.cfg['pretrained'] = ''
-
-    '''
-    opts.cuda = 'cuda' if cuda else 'cpu'
-    opts.mode = 'train'
-
-    opts.n_classes = len(class_names)
-    opts.backbone = opts.cfg['backbone']
-    opts.fcn = opts.cfg['fcn']
-
-    opts.cfg['cuda'] = opts.cuda
-    opts.cfg['mode'] = opts.mode
-    opts.cfg['n_classes'] = opts.n_classes
-
-    opts.resume = ''
-    '''
+    opts.cfg['pretrained'] = root + opts.cfg['pretrained']
 
     now = datetime.datetime.now().strftime('%Y_%m_%d-%H_%M_%S')
     opts.cfg['utc_time'] = now
 
-    opts.out = get_log_dir(opts.cfg['log_dir'], 1, opts.cfg, root)
+    opts.out = get_log_dir(opts.cfg['output_dir'], 1, opts.cfg, root)
 
-    print(opts.cfg)
+    #print(opts.cfg)
 
 
-    kwargs = {'num_workers': 4} if cuda else {}
+    kwargs = {'num_workers': opts.cfg['n_workers']} if cuda else {}
     train_loader = torch.utils.data.DataLoader(
         Cloud_Data(
             class_names,
             root,
+            args.image_type,
             image_set='train',
             backbone=opts.cfg['backbone'],
             transform=True),
-        batch_size=1,
+        batch_size=opts.cfg['batch_size'],
         shuffle=True,
         **kwargs
     )
@@ -105,10 +93,11 @@ if __name__ == "__main__":
         Cloud_Data(
             class_names,
             root,
+            args.image_type,
             image_set='val',
             backbone=opts.cfg['backbone'],
             transform=True),
-        batch_size=1,
+        batch_size=opts.cfg['batch_size'],
         shuffle=False,
         **kwargs
     )
@@ -118,11 +107,14 @@ if __name__ == "__main__":
 
     start_epoch = 0
     start_iteration = 0
+
     '''
-    if opts.resume:
+    if opts.cfg['pretrained']:
+        checkpoint = torch.load(opts.cfg['pretrained'])
         start_epoch = checkpoint['epoch']
         start_iteration = checkpoint['iteration']
     '''
+
     trainer.epoch = start_epoch
     trainer.iteration = start_iteration
     trainer.Train()
