@@ -4,6 +4,12 @@ The plugin trains unet model and tests the models. To run the plugin, the user m
 
 ### Train a Model
 
+0) Download Docker image
+
+```
+docker pull classicblue/plugin-training-unet
+```
+
 1) Preparing Dataset
 
 Image dataset including labeled images needs to be prepared on the host machine and the root path of the dataset needs to be mounted onto the plugin container. For training, the following files and folders need to be prepared as well.
