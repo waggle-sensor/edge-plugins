@@ -83,20 +83,20 @@ print() {
 }
 
 clean_up() {
-  if [ -e ${server_pid} ] ; then
-    if ps -p $(cat ${server_pid}) > /dev/null 2>&1 ; then
-      if [ ! -z $verbose ]; then
-        print "INFO" "Attemping to kill ffserver..."
-      fi
-      kill -9 $(cat ${server_pid})
-    fi
-  fi
   if [ -e ${input_pid} ] ; then
     if ps -p $(cat ${input_pid}) > /dev/null 2>&1 ; then
       if [ ! -z $verbose ]; then
         print "INFO" "Attemping to kill the input feeder..."
       fi
       kill -9 $(cat ${input_pid})
+    fi
+  fi
+  if [ -e ${server_pid} ] ; then
+    if ps -p $(cat ${server_pid}) > /dev/null 2>&1 ; then
+      if [ ! -z $verbose ]; then
+        print "INFO" "Attemping to kill ffserver..."
+      fi
+      kill -9 $(cat ${server_pid})
     fi
   fi
 }
@@ -155,13 +155,13 @@ do
 
   # NOTE: This only works
   #       when processed in background.
-    ffmpeg \
+  ffmpeg \
     -loglevel panic \
     -i http://localhost:8090/live \
     -frames 1 \
     -vcodec copy \
     -acodec copy \
-    -f null /tmp/feeder_test &
+    -f $input_format /tmp/feeder_test &
   tester_pid=$!
   # wait up to 5 seconds for the tester spawned
   for i in {05..00}
