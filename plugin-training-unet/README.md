@@ -4,6 +4,12 @@ The plugin trains unet model and tests the models. To run the plugin, the user m
 
 ### Train a Model
 
+0) Download Docker image
+
+```
+docker pull classicblue/plugin-training-unet
+```
+
 1) Preparing Dataset
 
 Image dataset including labeled images needs to be prepared on the host machine and the root path of the dataset needs to be mounted onto the plugin container. For training, the following files and folders need to be prepared as well.
@@ -89,6 +95,8 @@ To train, simply run the command below on the host machine. Please make sure to 
 # skip --runtime nvidia if the host is not CUDA accelerated
 docker run -d --rm --runtime nvidia --shm-size 16G -v ${PATH_TO_IMAGES}:/data -v ${PATH_TO_CHECKPOINT}:/train/checkpoints -v ${PATH_TO_LOGS}:/train/runs classicblue/plugin-trainig-unet -d train -e 5 -l 0.00006 -b 4 -s 1.0
 ```
+
+The `--runtime nvidia` option is for old version of nvidia-docker runtime toolkit. For the users who are using newest version of nvidia-docker runtime toolkit, use option of `--gpus all` instead of `--runtime nvidia`.
 
 The log of the training can be shown by,
 

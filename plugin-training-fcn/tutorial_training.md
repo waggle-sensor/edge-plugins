@@ -101,6 +101,8 @@ For example to use waggle cloud images with 16GB shared memory to train resnet-f
 docker run -d --rm --name plugin-training-fcn --runtime nvidia --shm-size 16G -v ${ROOT_PATH_FOR_CONFIGURATION}:/storage classicblue/plugin-training-fcn:0.2.0 --config config.list --image_type waggle_cloud
 ```
 
+The `--runtime nvidia` option is for old version of nvidia-docker runtime toolkit. For the users who are using newest version of nvidia-docker runtime toolkit, use option of `--gpus all` instead of `--runtime nvidia`.
+
 _Note: if host machine does not support 16GB shared memory, users can reduce the shared memory._
 
 8) Check Progress

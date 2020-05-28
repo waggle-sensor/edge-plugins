@@ -77,6 +77,9 @@ To train, simply run the command below on the host machine. Please make sure to 
 docker run -d --rm --runtime nvidia --shm-size 16G -v ${ROOT_PATH_FOR_CONFIGURATION}:/data waggle/plugin-trainig-fcn --config ${FILE_NAME: default=config.list} --image_type ${SEGMENTATION_CLASS_COLORING_TYPE: default=voc}
 ```
 
+The `--runtime nvidia` option is for old version of nvidia-docker runtime toolkit. For the users who are using newest version of nvidia-docker runtime toolkit, use option of `--gpus all` instead of `--runtime nvidia`.
+
+
 The log of the training can be shown by,
 
 ```
