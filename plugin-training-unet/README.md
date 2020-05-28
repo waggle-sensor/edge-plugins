@@ -96,6 +96,8 @@ To train, simply run the command below on the host machine. Please make sure to 
 docker run -d --rm --runtime nvidia --shm-size 16G -v ${PATH_TO_IMAGES}:/data -v ${PATH_TO_CHECKPOINT}:/train/checkpoints -v ${PATH_TO_LOGS}:/train/runs classicblue/plugin-trainig-unet -d train -e 5 -l 0.00006 -b 4 -s 1.0
 ```
 
+The `--runtime nvidia` option is for old version of nvidia-docker runtime toolkit. For the users who are using newest version of nvidia-docker runtime toolkit, use option of `--gpus all` instead of `--runtime nvidia`.
+
 The log of the training can be shown by,
 
 ```
