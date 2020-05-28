@@ -14,6 +14,7 @@ image_size=${image_size:-1280*960}
 
 echo "Launching stream.sh..."
 ${script_dir}/stream.sh \
+  -verbose \
   -f v4l2 \
   -input_format mjpeg \
   -video_size $image_size \

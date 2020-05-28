@@ -149,9 +149,13 @@ do
   fi
 
   # do input feeder check
+  if [ -e /tmp/feeder_test ] ; then
+    rm /tmp/feeder_test
+  fi
+
   # NOTE: This only works
   #       when processed in background.
-  ffmpeg \
+    ffmpeg \
     -loglevel panic \
     -i http://localhost:8090/live \
     -frames 1 \
@@ -159,7 +163,7 @@ do
     -acodec copy \
     -f null /tmp/feeder_test &
   tester_pid=$!
-  # wait 5 seconds for the tester spawned
+  # wait up to 5 seconds for the tester spawned
   for i in {05..00}
   do
     if ps -p $tester_pid > /dev/null 2>&1 ; then
@@ -169,7 +173,7 @@ do
     fi
   done
   if [ $i -eq 0 ]; then
-    print "ERROR" "Could not run testing! Halting..."
+    print "ERROR" "Could not run the feeder test process! Halting..."
     clean_up
     exit 1
   fi
@@ -183,15 +187,23 @@ do
       break
     fi
   done
-  if [ $i -eq 0 ]; then
-    kill -9 $tester_pid
+
+  # check if the tester process finishes
+  # and grabs a frame successfully
+  if [ $i -ne 0 ] && \
+     [ -s /tmp/feeder_test ] ; then
+    :
+  else
     if [ ! -z $verbose ]; then
       print "ERROR" "Input feeder not responding!"
     fi
     clean_up
     spin_up
-  else
-    :
+  fi
+
+  # clean up the tester process
+  if ps -p $tester_pid > /dev/null 2>&1 ; then
+    kill -9 $tester_pid
   fi
   # WARNING: The method below is NOT appropriate
   #          to check status of the input feeder
