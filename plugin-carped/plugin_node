@@ -191,10 +191,13 @@ def main():
     try:
         worker.start()
         while True:
-            heartbeat.get(timeout=30)
+            heartbeat.get(timeout=30)  # throws an exception on timeout
     except Exception:
-        worker.terminate()
-        raise RuntimeError('worker is no longer responding')
+        pass
+
+    # if we reach this point, the worker process has stopped
+    worker.terminate()
+    raise RuntimeError('worker is no longer responding')
 
 
 if __name__ == '__main__':
