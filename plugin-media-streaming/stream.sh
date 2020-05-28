@@ -30,7 +30,7 @@ do
     shift
     shift
     ;;
-    -v)
+    -verbose)
     verbose="true"
     shift
     ;;
@@ -151,7 +151,7 @@ do
   # do input feeder check
   # NOTE: This only works
   #       when processed in background.
-  timeout 30 ffmpeg \
+  ffmpeg \
     -loglevel panic \
     -i http://localhost:8090/live \
     -frames 1 \
