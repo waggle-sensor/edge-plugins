@@ -85,18 +85,6 @@ def detect_objects(img_blob, cvNet, classes, confidence=0.3, img_rows=1, img_col
     return output
 
 
-def print_detected_objects(detected_objects):
-    for detected_object in detected_objects:
-        print('%s was found at' % (detected_object,))
-        for _, rect in detected_objects[detected_object].items():
-            left, top, right, bottom = rect
-            x = left + ((right - left) / 2.)
-            y = top + ((bottom - top) / 2.)
-            print('    x:%5d, y:%5d' % (x, y))
-        print('Total: %s %d' % (detected_object, len(
-            detected_objects[detected_object].keys())))
-
-
 def open_video_capture(input):
     capture = cv2.VideoCapture(input)
 
@@ -106,8 +94,16 @@ def open_video_capture(input):
     return capture
 
 
+def time_now():
+    return time.monotonic()
+
+
+def time_since(t):
+    return time.monotonic() - t
+
+
 def worker_main(args, heartbeat):
-    print(f'opening input {args.input}')
+    print(f'opening input {args.input}', flush=True)
     capture = open_video_capture(args.input)
 
     # bind read_image function to capture
@@ -118,7 +114,7 @@ def worker_main(args, heartbeat):
                 return img
             time.sleep(0.1)
 
-    print(f'loading model and model config')
+    print(f'loading model and model config', flush=True)
     cvNet = read_model_file(config['model'], config['model_desc'])
     classes = read_classes_file(config['classes'])
     confidence = float(config.get('detection_confidence', 0.3))
@@ -126,6 +122,8 @@ def worker_main(args, heartbeat):
 
     if args.debug is not True:
         plugin = waggle.plugin.Plugin()
+
+    last_publish_time = time_now()
 
     while True:
         heartbeat.put(1)
@@ -158,9 +156,12 @@ def worker_main(args, heartbeat):
         count_car = len(cars)
         count_person = len(people)
 
-        print(f'cars={count_car} pedestrians={count_person}')
+        print(f'cars={count_car} pedestrians={count_person}', flush=True)
 
-        if args.debug is not True:
+        if args.debug is not True and time_since(last_publish_time) > 30:
+            last_publish_time = time_now()
+            print('publishing this sample', flush=True)
+
             plugin.add_measurement({
                 'sensor_id': 0x3001,
                 'parameter_id': 1,
