@@ -22,7 +22,6 @@ device = os.environ.get('CORESENSE_DEVICE', '/dev/waggle_coresense')
 
 def get_default_configuration():
     default_sensor_list = [
-        # SENSOR_NAME SENSOR_ID
         ('MetMAC', 0x00),
         ('TMP112', 0x01),
         ('HTU21D', 0x02),
@@ -42,7 +41,8 @@ def get_default_configuration():
         ('ML8511', 0x10),
         ('TMP421', 0x13),
         ('Chemsense', 0x2A),
-        ('AlphaHisto', 0x28)
+        # ('AlphaHisto', 0x28),
+        ('PMS7003', 0x36),
     ]
     sensor_table = {}
     for item in default_sensor_list:
@@ -56,11 +56,6 @@ def get_default_configuration():
         }
         sensor_table.update(sensor_to_be_added)
     return sensor_table
-
-
-# class DebugHandler:
-
-#     def
 
 
 class DeviceHandler(object):
