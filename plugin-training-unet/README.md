@@ -7,7 +7,7 @@ The plugin trains unet model and tests the models. To run the plugin, the user m
 0) Download Docker image
 
 ```
-docker pull classicblue/plugin-training-unet
+docker pull waggle/plugin-training-unet
 ```
 
 1) Preparing Dataset
