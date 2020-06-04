@@ -98,7 +98,7 @@ To train, simply run the command below on the host machine. Please make sure to 
 For example to use waggle cloud images with 16GB shared memory to train resnet-fcn101 network:
 ```
 # skip --runtime nvidia if the host is not CUDA accelerated
-docker run -d --rm --name plugin-training-fcn --runtime nvidia --shm-size 16G -v ${ROOT_PATH_FOR_CONFIGURATION}:/storage classicblue/plugin-training-fcn:0.2.0 --config config.list --image_type waggle_cloud
+docker run -d --rm --name plugin-training-fcn --runtime nvidia --shm-size 16G -v ${ROOT_PATH_FOR_CONFIGURATION}:/data classicblue/plugin-training-fcn:0.2.0 --config config.list --image_type waggle_cloud
 ```
 
 The `--runtime nvidia` option is for old version of nvidia-docker runtime toolkit. For the users who are using newest version of nvidia-docker runtime toolkit, use option of `--gpus all` instead of `--runtime nvidia`.
