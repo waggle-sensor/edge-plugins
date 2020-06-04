@@ -1,6 +1,2 @@
 numpy
-pika>=1.0.0
-pyserial
-pyyaml
-crcmod
-bitstring
+git+https://github.com/waggle-sensor/pywaggle@v0.29.0
