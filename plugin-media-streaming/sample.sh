@@ -127,14 +127,21 @@ while :;
 do
   output_file=${out_dir}/$(date -Iseconds).${extension}
   ffmpeg \
-    -loglevel panic \
+    -loglevel error \
     -i $input_stream \
     ${ffmpeg_params} \
-    ${unparsed_parameters} \
+    ${unparsed_parameters[@]} \
     ${output_file}
+  return_code=$?
+  if [ ${return_code} -ne 0 ]; then
+    if [ ! -z ${verbose} ]; then
+      print "ERROR" "Could not sample: return code ${return_code}"
+    fi
+  fi
 
   if [ ! -z ${verbose} ]; then
     print "INFO" "${output_file}"
+    print "INFO" "Next sampling in ${interval} seconds"
   fi
   sleep ${interval}
 done
