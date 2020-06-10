@@ -126,7 +126,7 @@ print "INFO" "Sampling starts..."
 while :;
 do
   output_file=${out_dir}/$(date -Iseconds).${extension}
-  timeout 60 ffmpeg \
+  timeout $((${period}+60)) ffmpeg \
     -loglevel error \
     -i $input_stream \
     ${ffmpeg_params} \
