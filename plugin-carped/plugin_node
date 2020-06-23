@@ -164,14 +164,14 @@ def worker_main(args, heartbeat):
             print('publishing this sample', flush=True)
 
             plugin.add_measurement({
-                'sensor_id': 0x3001,
-                'parameter_id': 1,
+                'id': 0x3001,
+                'sub_id': 1,
                 'value': count_car,
             })
 
             plugin.add_measurement({
-                'sensor_id': 0x3001,
-                'parameter_id': 2,
+                'id': 0x3001,
+                'sub_id': 2,
                 'value': count_person,
             })
 

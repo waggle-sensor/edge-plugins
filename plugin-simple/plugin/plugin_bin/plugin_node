@@ -16,8 +16,8 @@ while True:
         print('received message!', msg, flush=True)
 
     plugin.add_measurement({
-        'sensor_id': 1,
-        'parameter_id': 1,
+        'id': 1,
+        'sub_id': 1,
         'value': 12.3,
     })
 
