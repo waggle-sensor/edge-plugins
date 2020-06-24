@@ -3,6 +3,7 @@ FROM waggle/plugin-base-gpu:0.1.0
 RUN apt-get update \
   && apt-get install -y \
   libopenblas-base \
+  libopenmpi-dev \
   zlib1g-dev \
   libjpeg-dev \
   && rm -rf /var/lib/apt/lists/*
