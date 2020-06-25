@@ -17,7 +17,7 @@ Image dataset including labeled images needs to be prepared on the host machine 
 - `train/images` is a folder containing all images
 - `train/labels` is a folder containing all labeled (ground truth) images
 
-Recommended number of images is 1,000 per classes according to TensorFlow, but user can try with less number of images. The ground truth images (labeled images) must be binary (0 or 255).
+Recommended number of images is 1,000 per classes according to TensorFlow, but user can try with less number of images.
 
 **Waggle team provides an example dataset for cloud segmentation for users of this plugin.**
 
@@ -113,7 +113,10 @@ After the training is completed checkpoint models and logs can be found in `${PA
 1) Inference Configuration
 
 User can change parameters that are listed below as input arguments:
+
 ```
+'--mode', type=str, default='train', help='purpose of the run', choices=['train', 'val']
+
 # Datset Options
 '--input_path', type=str, help='input dataset path'
 '--input_file', type=str, help='when a list is an input'
@@ -135,7 +138,7 @@ User can change parameters that are listed below as input arguments:
 ```
 
 
-3) Inference
+2) Inference
 
 To inference, simply run the command below on the host machine. Please make sure to set all the path correct.
 
