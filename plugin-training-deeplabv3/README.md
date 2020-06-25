@@ -26,7 +26,7 @@ Any person using the Data, shall not distribute, share, publish or release the D
 Users can download the images through below:
 ```
 from torchvision.datasets.utils import download_and_extract_archive
-url = 'https://web.lcrc.anl.gov/public/waggle/datasets/WaggleClouds.tar.gz'
+url = 'https://web.lcrc.anl.gov/public/waggle/datasets/WaggleClouds-0.2.0.tar.gz'
 download_and_extract_archive(url, 'download', 'data')
 ```
 
