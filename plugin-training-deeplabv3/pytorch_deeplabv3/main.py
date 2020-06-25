@@ -14,6 +14,7 @@ from datasets.waggle_cloud import WaggleSegmentation
 from test import DeepLab
 
 import glob
+import imageio
 
 class Trainer():
     def __init__(self, data_loader, opts):
@@ -101,7 +102,6 @@ class Trainer():
     def validate(self, opts):
         # import matplotlib.pyplot as plt
         training = self.model.training
-        print(training)
         self.model.eval()
 
         n_class = opts.num_classes
@@ -139,14 +139,15 @@ class Trainer():
                                                            img=img,
                                                            n_class=opts.num_classes)
                         visualizations.append(viz)
+                        pass
         acc, acc_cls, mean_iu, fwavacc = self._label_accuracy_score(label_trues, label_preds, n_class)
 
-        out = osp.join(opts.output, 'visualization_viz')
-        if not osp.exists(out):
+        out = os.path.join(opts.output, 'visualization_viz')
+        if not os.path.exists(out):
             os.makedirs(out)
-        out_file = osp.join(out, 'iter%012d.jpg' % self.iteration)
+        out_file = os.path.join(out, 'iter%012d.jpg' % self.iteration)
         #raise Exception(len(visualizations))
-        img_ = fcn.utils.get_tile_image(visualizations)
+        img_ = utils.fcn_utils.get_tile_image(visualizations)
         imageio.imwrite(out_file, img_)
         # plt.imshow(imageio.imread(out_file))
         # plt.show()
@@ -156,23 +157,24 @@ class Trainer():
 
         wandb.log({'val_loss': val_loss, 'val_acc': acc, 'val_acc_cls': acc_cls, 'val_mean_iu': mean_iu, 'val_fwavacc': fwavacc})
 
+        is_best = mean_iu > self.best_mean_iu
+        if is_best:  # save best model
+            self.best_mean_iu = mean_iu
 
         def save_ckpt(path):
             """ save current model
             """
             torch.save({
-                "cur_itrs": cur_itrs,
-                "model_state": model.module.state_dict(),
-                "optimizer_state": optimizer.state_dict(),
-                "scheduler_state": scheduler.state_dict(),
-                "best_score": best_score,
+                "cur_itrs": self.iteration,
+                "model_state": self.model.module.state_dict(),
+                "optimizer_state": self.optimizer.state_dict(),
+                "scheduler_state": self.scheduler.state_dict(),
+                "best_score": self.best_mean_iu,
             }, path)
             print("Model saved as %s" % path)
 
 
-        is_best = mean_iu > self.best_mean_iu
         if is_best:
-            self.best_mean_iu = mean_iu
             save_ckpt('checkpoints/best_%s_%s_os%d.pth' % (opts.model, opts.dataset, opts.output_stride))
         else:
             save_ckpt('checkpoints/latest_%s_%s_os%d.pth' % (opts.model, opts.dataset, opts.output_stride))
@@ -287,7 +289,7 @@ if __name__ == '__main__':
                                                                                                               'deeplabv3_mobilenet', 'deeplabv3plus_mobilenet'])
     # Train Options
     parser.add_argument('--output', type=str, default='./output', help='folder for output images path')
-    parser.add_argument('--input_file', type=str, help='when a list is an input')
+    parser.add_argument('--input_file', type=str)
     parser.add_argument('--n_workers', type=int, default=4, help='number of workers to read dataset')
 
     parser.add_argument('--total_itrs', type=int, default=30e3, help='epoch number (default: 30k)')

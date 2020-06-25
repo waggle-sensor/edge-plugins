@@ -135,6 +135,7 @@ class WaggleSegmentation(data.Dataset):
     def untransform(self, img, lbl):
         img = np.array(img, dtype=np.float64)
         lbl = np.array(lbl, dtype=np.float64)
+        lbl = np.array(lbl, dtype=np.int8)
 
         img = img.transpose(2, 1, 0)
 
