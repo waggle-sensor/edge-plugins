@@ -162,4 +162,4 @@ The result of the inference is an image, and the image is stored in `${PATH_TO_O
 
 ### Acknowledgement
 
-This repo is built upon [VainF](https://github.com/VainF/DeepLabV3Plus-Pytorch)'s code and some snippets can be just a mirror.
+This repo is built upon [VainF](https://github.com/VainF/DeepLabV3Plus-Pytorch) and [affromero](https://github.com/affromero/FCN)'s code and some snippets can be just a mirror.
