@@ -70,15 +70,29 @@ User can change parameters that are listed below as input arguments:
 ```
 
 
-
 3) Training
+
+While training, this script uses a platform provided by [Weights and Biases](https://www.wandb.com) to save log and see the log realtime through their website. For that, users need to get an account in that.
 
 To train, simply run the command below on the host machine. Please make sure to set all the path correct.
 
 
 ```
-# skip --runtime nvidia if the host is not CUDA accelerated
-docker run -d --rm --runtime nvidia --shm-size 16G -v ${PATH_TO_IMAGES}:/data -v ${PATH_TO_CHECKPOINT}:/train/checkpoints -v ${PATH_TO_LOGS}:/train/runs classicblue/plugin-training-unet -d train -e 5 -l 0.00006 -b 4 -s 1.0
+## skip --runtime nvidia if the host is not CUDA accelerated
+## --gpus all need to be used instead of --runtime nvidia when the nvidia driver is the latest (May, 2020)
+docker run -d --rm --runtime nvidia \
+ --shm-size 16G \
+ -v ${PATH_TO_IMAGES}:/data \
+ -v ${PATH_TO_CHECKPOINT}:/train/checkpoints \
+ -v ${PATH_TO_OUTPUT_IMAGES}:/train/output \
+ -v ${PATH_TO_WANDB_LOGS}:/train/wandb \ 
+ waggle/plugin-training-deeplabv3 \
+ --dataset waggle_cloud \
+ --input_path /data \
+ --model ${MODEL_NAME} \
+ --batch 3 \
+ --num_classes 2 \
+ --resize 600
 ```
 
 The `--runtime nvidia` option is for old version of nvidia-docker runtime toolkit. For the users who are using newest version of nvidia-docker runtime toolkit, use option of `--gpus all` instead of `--runtime nvidia`.
@@ -89,7 +103,7 @@ The log of the training can be shown by,
 docker logs -f ${DOCKER_IMAGE_NAME}
 ```
 
-After the training is completed checkpoint models and logs can be found in `${PATH_TO_CHECKPOINT}` on the host machine. The logs stored in `${PATH_TO_LOGS}` as tensorboard and csv file, and users can handle the data as they familiar with.
+After the training is completed checkpoint models and logs can be found in `${PATH_TO_CHECKPOINT}` on the host machine. 
 
 
 
@@ -121,22 +135,27 @@ User can change parameters that are listed below as input arguments:
 ```
 
 
-2) Trained model
-
-The plugin can load a pre-trained model.  If users want to provide a pre-trained model, the path of the pretrained model can be provided through `-f` or `--load` argument for training, and `-m` or `--model` argument for inference.
-
-
-
 3) Inference
 
 To inference, simply run the command below on the host machine. Please make sure to set all the path correct.
 
 
 ```
-docker run -d --rm --runtime nvidia --shm-size 16G -v ${PATH_TO_IMAGES}:/data -v ${PATH_TO_CHECKPOINT}:/train/checkpoints -v ${PATH_TO_OUTPUT_IMAGES}:/train/output classicblue/plugin-training-unet -d test -s 1.0
+docker run -d --rm --runtime nvidia \
+ --shm-size 16G \
+ -v ${PATH_TO_IMAGES}:/data \
+ -v ${PATH_TO_CHECKPOINT}:/train/checkpoints \
+ -v ${PATH_TO_OUTPUT_IMAGES}:/train/output \
+ waggle/plugin-training-deeplabv3 \
+ --mode val \
+ --model ${MODEL_NAME} \
+ --ckpt /train/checkpoints/${CKPT_NAME} \
+ --resize 600 \
+ --input /data/
+
 ```
 
-The result of the inference is an image, and the image is stored in `${OUTPUT_DIR}`.
+The result of the inference is an image, and the image is stored in `${PATH_TO_OUTPUT_IMAGES}`.
 
 ### Acknowledgement
 
