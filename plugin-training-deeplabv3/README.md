@@ -14,8 +14,8 @@ docker pull waggle/plugin-training-deeplabv3
 
 Image dataset including labeled images needs to be prepared on the host machine and the root path of the dataset needs to be mounted onto the plugin container. For training, the following files and folders need to be prepared as well.
 
-- `train/images` is a folder containing all images
-- `train/labels` is a folder containing all labeled (ground truth) images
+- `${PATH_TO_IMAGES}/images` is a folder containing all images
+- `${PATH_TO_IMAGES}/labels` is a folder containing all labeled (ground truth) images
 
 Recommended number of images is 1,000 per classes according to TensorFlow, but user can try with less number of images.
 
@@ -72,7 +72,7 @@ User can change parameters that are listed below as input arguments:
 
 3) Training
 
-While training, this script uses a platform provided by [Weights and Biases](https://www.wandb.com) to save log and see the log realtime through their website. For that, users need to get an account in that.
+While training, this script uses a platform provided by [Weights and Biases](https://www.wandb.com) to save log and see the log in realtime through their website. For that, users need to create an account or log in to their account.
 
 To train, simply run the command below on the host machine. Please make sure to set all the path correct.
 
@@ -112,7 +112,7 @@ After the training is completed checkpoint models and logs can be found in `${PA
 
 1) Inference Configuration
 
-User can change parameters that are listed below as input arguments:
+User can use the same docker image that used for training, and can change parameters that are listed below as input arguments:
 
 ```
 '--mode', type=str, default='train', help='purpose of the run', choices=['train', 'val']
