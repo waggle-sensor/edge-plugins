@@ -188,6 +188,10 @@ def main():
     worker = multiprocessing.Process(
         target=worker_main, args=(args, heartbeat))
 
+    # TODO I couldn't figure out how to get a frame from cv2.VideoCapture without blocking
+    # forever when as error occurs. I've organized the code so the video capture happens
+    # in a worker process and is shared over a queue. This allows us to build in a timeout
+    # to recover from a locked up camera.
     try:
         worker.start()
         while True:
