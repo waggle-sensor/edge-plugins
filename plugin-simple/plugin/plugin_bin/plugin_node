@@ -5,23 +5,23 @@
 #  license.  For more details on the Waggle project, visit:
 #           http://www.wa8.gl
 # ANL:waggle-license
-import waggle.plugin
+from waggle.plugin import Plugin
+from random import random
 import time
-import logging
 
-plugin = waggle.plugin.Plugin()
+plugin = Plugin()
 
 while True:
-    for msg in plugin.get_waiting_messages():
-        print('received message!', msg, flush=True)
+    value = random()
+
+    print('adding measurement', value)
 
     plugin.add_measurement({
         'id': 1,
         'sub_id': 1,
-        'value': 12.3,
+        'value': value,
     })
 
-    print('publish', flush=True)
     plugin.publish_measurements()
 
-    time.sleep(5)
+    time.sleep(30)
