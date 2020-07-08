@@ -134,6 +134,7 @@ class Trainer():
                     label_trues.append(lt)
                     label_preds.append(lp)
                     if len(visualizations) < 9:
+                        pass
                         viz = utils.fcn_utils.visualize_segmentation(lbl_pred=lp,
                                                            lbl_true=lt,
                                                            img=img,
@@ -155,7 +156,6 @@ class Trainer():
         val_loss /= len(self.val_loader)
 
 
-        wandb.log({'val_loss': val_loss, 'val_acc': acc, 'val_acc_cls': acc_cls, 'val_mean_iu': mean_iu, 'val_fwavacc': fwavacc})
 
         is_best = mean_iu > self.best_mean_iu
         if is_best:  # save best model
@@ -248,8 +248,6 @@ class Trainer():
                 acc, acc_cls, mean_iu, fwavacc = self._label_accuracy_score(lbl_true, lbl_pred, n_class=opts.num_classes)
 
 
-                wandb.log({'train_loss(loss)': loss, 'train_loss(np_loss)': np_loss, 'train_loss(interval_loss)': interval_loss,
-                           'train_acc': acc, 'train_acc_cls': acc_cls, 'train_mean_iu': mean_iu, 'train_fwavacc': fwavacc})
 
 
                 self.iteration = cur_itrs
@@ -361,11 +359,6 @@ if __name__ == '__main__':
         exit(1)
 
 
-    import wandb
-    wandb.init(project="my-project")
-    wandb.config.dropout = 0.2
-    wandb.config.hidden_layer_size = 128
-
 
     args.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -400,12 +393,4 @@ if __name__ == '__main__':
     trainer = Trainer(data_loader, args)
     trainer.train(args)
     #main(args, train_loader, val_loader)
-
-    # by default, this will save to a new subfolder for files associated
-    # with your run, created in wandb.run.dir (which is ./wandb by default)
-    wandb.save("mymodel.h5")
-
-    ## you can pass the full path to the Keras model API    --> it doesn't need for pytorch
-    #model.save(os.path.join(wandb.run.dir, "mymodel.h5"))
-
 
