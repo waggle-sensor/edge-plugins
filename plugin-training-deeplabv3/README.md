@@ -72,8 +72,6 @@ User can change parameters that are listed below as input arguments:
 
 3) Training
 
-While training, this script uses a platform provided by [Weights and Biases](https://www.wandb.com) to save log and see the log in realtime through their website. For that, users need to create an account or log in to their account.
-
 To train, simply run the command below on the host machine. Please make sure to set all the path correct.
 
 
