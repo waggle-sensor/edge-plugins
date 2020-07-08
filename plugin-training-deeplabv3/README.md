@@ -80,6 +80,7 @@ To train, simply run the command below on the host machine. Please make sure to 
 ## --gpus all need to be used instead of --runtime nvidia when the nvidia driver is the latest (May, 2020)
 docker run -d --rm --runtime nvidia \
  --shm-size 16G \
+ --name deeplab \
  -v ${PATH_TO_IMAGES}:/data \
  -v ${PATH_TO_CHECKPOINT}:/train/checkpoints \
  -v ${PATH_TO_OUTPUT_IMAGES}:/train/output \
@@ -98,7 +99,7 @@ The `--runtime nvidia` option is for old version of nvidia-docker runtime toolki
 The log of the training can be shown by,
 
 ```
-docker logs -f ${DOCKER_IMAGE_NAME}
+docker logs -f deeplab
 ```
 
 After the training is completed checkpoint models and logs can be found in `${PATH_TO_CHECKPOINT}` on the host machine. 
