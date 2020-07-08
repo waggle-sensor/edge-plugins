@@ -84,7 +84,6 @@ docker run -d --rm --runtime nvidia \
  -v ${PATH_TO_IMAGES}:/data \
  -v ${PATH_TO_CHECKPOINT}:/train/checkpoints \
  -v ${PATH_TO_OUTPUT_IMAGES}:/train/output \
- -v ${PATH_TO_WANDB_LOGS}:/train/wandb \ 
  waggle/plugin-training-deeplabv3 \
  --dataset waggle_cloud \
  --input_path /data \
