@@ -152,7 +152,7 @@ docker run -d --rm --runtime nvidia \
  --model ${MODEL_NAME} \
  --ckpt /train/checkpoints/${CKPT_NAME} \
  --resize 600 \
- --input /data/
+ --input_path /data/
 
 ```
 
