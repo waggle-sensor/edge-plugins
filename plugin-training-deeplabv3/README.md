@@ -72,8 +72,6 @@ User can change parameters that are listed below as input arguments:
 
 3) Training
 
-While training, this script uses a platform provided by [Weights and Biases](https://www.wandb.com) to save log and see the log in realtime through their website. For that, users need to create an account or log in to their account.
-
 To train, simply run the command below on the host machine. Please make sure to set all the path correct.
 
 
@@ -82,10 +80,10 @@ To train, simply run the command below on the host machine. Please make sure to 
 ## --gpus all need to be used instead of --runtime nvidia when the nvidia driver is the latest (May, 2020)
 docker run -d --rm --runtime nvidia \
  --shm-size 16G \
+ --name deeplab \
  -v ${PATH_TO_IMAGES}:/data \
  -v ${PATH_TO_CHECKPOINT}:/train/checkpoints \
  -v ${PATH_TO_OUTPUT_IMAGES}:/train/output \
- -v ${PATH_TO_WANDB_LOGS}:/train/wandb \ 
  waggle/plugin-training-deeplabv3 \
  --dataset waggle_cloud \
  --input_path /data \
@@ -100,7 +98,7 @@ The `--runtime nvidia` option is for old version of nvidia-docker runtime toolki
 The log of the training can be shown by,
 
 ```
-docker logs -f ${DOCKER_IMAGE_NAME}
+docker logs -f deeplab
 ```
 
 After the training is completed checkpoint models and logs can be found in `${PATH_TO_CHECKPOINT}` on the host machine. 
@@ -154,7 +152,8 @@ docker run -d --rm --runtime nvidia \
  --model ${MODEL_NAME} \
  --ckpt /train/checkpoints/${CKPT_NAME} \
  --resize 600 \
- --input /data/
+ --num_classes 2 \
+ --input_path /data/
 
 ```
 
