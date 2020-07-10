@@ -1,0 +1,16 @@
+{
+    "architecture": [
+        "linux/amd64",
+        "linux/arm/v7",
+        "linux/arm64"
+    ],
+    "arguments": [],
+    "description": "a simple app",
+    "inputs": [],
+    "metadata": {},
+    "id": 100,
+    "name": "simple",
+    "namespace": "waggle",
+    "source": "https://github.com/waggle-sensor/edge-plugins/plugin-simple",
+    "version": "0.2.0"
+}
