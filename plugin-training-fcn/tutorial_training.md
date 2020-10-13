@@ -19,7 +19,7 @@ Waggle team provides an example dataset for cloud segmentation for users of this
 _**Any person using the Data, shall not distribute, share, publish or release the Data to any person. The Data will only 
 be used in research and the user may not make copies of the data for use outside of its research responsibilities.**_
 
-Users can download the images through below:
+Users can download the example dataset for cloud segmentation by running the code below in Python:
 
 ```
 from torchvision.datasets.utils import download_and_extract_archive
@@ -27,7 +27,7 @@ url = 'https://web.lcrc.anl.gov/public/waggle/datasets/WaggleClouds.tar.gz'
 download_and_extract_archive(url, 'download', 'data')
 ```
 
-Below is the example image from the cloud dataset that Waggle team is providing.
+Below is an example of an input image (on the left) and a target image (on the right) from the example cloud segmentation dataset.
 
 <p align="center">
 <kbd><img src="./images/image.jpg" width="250" /></kbd> <kbd><img src="./images/label.jpg" width="250" /></kbd>
@@ -36,7 +36,7 @@ Below is the example image from the cloud dataset that Waggle team is providing.
 
 3) Preparing Class List
 
-With the images,`class_names.list` is required. The list need to be stored in the same folder where the `images` and `labels` exist. The `class_names.list` is the name of classes that the users target to train for. For example, to train a model for cloud segmentation, the `class_names.list` contiains:
+For the images, a file named `class_names.list` is required. The list need to be stored in the same folder where the `images` and `labels` exist. The `class_names.list` contains the names of the classes the model is trying to predict. For example, when training a model for cloud segmentation with the provided cloud segmentation dataset, the `class_names.list` contiains:
 ```
 sky
 cloud
@@ -44,7 +44,7 @@ cloud
 
 4) Preparing Model Configuration
 
-The `config.list` is the configuration of the training such as maximum iteration (`max_iteration`), learning rate (`lr`),  directory name for saving logs and models (`output_dir`), and so on. An example of a configuration for training Resnet based fcn101 network is provided below: 
+The `config.list` file provides the option to configure the training of the model. For example, options such as maximum iteration (`max_iteration`), learning rate (`lr`),  directory name for saving logs and models (`output_dir`), and so on can be set in the `config.list` file. An example of a configuration for training Resnet based fcn101 network is provided below: 
 ```
 {
     "max_iteration": 100000, 
@@ -74,7 +74,7 @@ The plugin requires a pretrained fcn model with regard to what the user is tyrin
 
 All of the files and folders must be in one folder. For example:
 ```
-foler
+folder
  ├─ train
  │     ├─ images
  │     │     ├─ image1
