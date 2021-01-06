@@ -1,0 +1,25 @@
+FROM nvcr.io/nvidia/l4t-ml:r32.4.4-py3
+
+LABEL version="1.0.0" \
+      description="Nvidia all-in-one with OpenCV 4.5.1 on CUDA10.2" \
+      architecture="linux/arm64"
+
+RUN apt-get update \
+  && apt-get install -y \
+  libavcodec-dev \
+  libavformat-dev \
+  libswscale-dev \
+  libtbb2 \
+  libtbb-dev \
+  libjpeg-dev \
+  libpng-dev \
+  libtiff-dev \
+  libdc1394-22-dev \
+  && rm -rf /var/lib/apt/lists/*
+
+COPY OpenCV*.sh /tmp/
+RUN /tmp/OpenCV-4.5.1-aarch64.sh --skip-license
+
+COPY OpenCV-4.5.1-aarch64-python.deb /tmp/
+RUN dpkg -i /tmp/OpenCV-4.5.1-aarch64-python.deb \
+  && rm /tmp/OpenCV-4.5.1-aarch64-python.deb /tmp/OpenCV-4.5.1-aarch64.sh
